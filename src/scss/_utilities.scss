@@ -1,0 +1,65 @@
+.hidden {
+  display: none !important;
+}
+
+.spacer-1 {
+  grid-column: span 1;
+}
+.spacer-2 {
+  grid-column: span 2;
+}
+.spacer-3 {
+  grid-column: span 3;
+}
+.spacer-4 {
+  grid-column: span 4;
+}
+.spacer-5 {
+  grid-column: span 5;
+}
+.spacer-8 {
+  grid-column: span 8;
+}
+.spacer-9 {
+  grid-column: span 9;
+}
+
+.rotate-90 {
+  transform: rotate(90deg);
+}
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+.green {
+  color: green;
+  background-color: green !important;
+}
+.yellow {
+  color: yellow;
+  background-color: yellow !important;
+}
+.red {
+  color: red;
+  background-color: red !important;
+}
+.black {
+  color: green;
+  background-color: green !important;
+}
+.white {
+  color: white;
+  background-color: white !important;
+}
+.lightblue {
+  color: lightblue;
+  background-color: lightblue !important;
+}
+.orange {
+  color: orange;
+  background-color: orange !important;
+}
+.blue {
+  color: blue;
+  background-color: blue !important;
+}

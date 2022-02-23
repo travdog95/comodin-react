@@ -1,23 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import "./css/main.css";
+import GameBoard from "./components/GameBoard";
+import MessageContainer from "./components/MessageContainer";
+import CardTable from "./components/CardTable";
+import AuditContainer from "./components/AuditContainer";
+import Game from "./models/game";
 
 function App() {
+  const settings = {
+    playerNames: ["Travis", "Kimmo"],
+    maxCardsInHand: 5,
+  };
+
+  const game = new Game(settings);
+  game.startNewGame();
+
+  console.log(game);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+      <header className="header">
+        <div className="title">Jokers & Marbles</div>
       </header>
+      <GameBoard settings={settings} />
+      <MessageContainer />
+      <CardTable />
+      <AuditContainer />
     </div>
   );
 }

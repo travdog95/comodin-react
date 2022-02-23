@@ -1,0 +1,25 @@
+export default {
+  DECK_OF_CARDS_API: "https://deckofcardsapi.com/api/deck/",
+  MARBLE_COLORS: ["yellow", "green", "black", "white", "lightblue", "orange", "red", "blue"],
+  NUM_POSITIONS_PER_TRACK: 18,
+  CARDS: {
+    EXIT_START: ["JACK", "QUEEN", "KING", "ACE"],
+    MOVE_BACKWARD: ["8", "9", "10"],
+    VALUES: {
+      ACE: 1,
+      JACK: 10,
+      QUEEN: 10,
+      KING: 10,
+      2: 2,
+      3: 3,
+      4: 4,
+      5: 5,
+      6: 6,
+      7: 7,
+      8: 8,
+      9: 9,
+      10: 10,
+    },
+    SPLIT_MOVE: ["7", "9"],
+  },
+};
