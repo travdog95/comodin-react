@@ -1,16 +1,15 @@
-import Deck from "../models/deck";
 import constants from "../helpers/constants";
 import utils from "../helpers/utilities";
 
 export default class Player {
-  constructor(id, screenName, settings) {
+  constructor(id, screenName, settings, color, deck, hand, marbles) {
     this.id = id;
     this.screenName = screenName;
     this.settings = settings;
-    this.color = "";
-    this.deck = {};
-    this.hand = [];
-    this.marbles = {};
+    this.color = color;
+    this.deck = deck;
+    this.hand = hand;
+    this.marbles = marbles;
     this.discardedCard = {};
     // this.paddleElement = "";
     // this.deckElement = "";
@@ -23,55 +22,9 @@ export default class Player {
     // this.doorPosition = "";
   }
 
-  async init() {
-    //Get new deck of cards
-    const numOfDecks = 1;
-    const deck = await this.newDeck(numOfDecks);
-    this.deck = new Deck(deck.deck_id, numOfDecks);
-
-    //Assign color
-    this.color = constants.MARBLE_COLORS[this.id - 1];
-
-    //Place marbles in start
-    this.loadMarblesToStartPositions(5);
-
-    //Deal hand
-    this.dealHand(this.settings.maxCardsInHand);
-  }
-
-  async newDeck(numOfDecks) {
-    const response = await fetch(
-      `${constants.DECK_OF_CARDS_API}new/shuffle/?deck_count=${numOfDecks}&jokers_enabled=true`
-    );
-
-    if (response.status >= 200 && response.status <= 299) {
-      const data = await response.json();
-      return data;
-    } else {
-      return false;
-    }
-  }
-
   // get marbleElements() {
   //   return document.querySelectorAll(`[data-player="${this.id}"]`);
   // }
-
-  async dealHand(numCards) {
-    const cards = await this.deck.drawCards(numCards);
-
-    cards.forEach((card) => {
-      this.hand.push(card);
-    });
-  }
-
-  loadMarblesToStartPositions(numMarbles) {
-    let m = 0;
-    for (m; m < numMarbles; m++) {
-      const marbleId = m + 1;
-      const position = `start-${marbleId}`;
-      this.marbles[marbleId] = position;
-    }
-  }
 
   async drawCard() {
     const cards = await this.deck.drawCards(1);
