@@ -80,65 +80,8 @@
   background-color: blue !important;
 }
 
-:root {
-  font-family: Arial, sans-serif;
-  color: black;
-  font-size: 14px;
-}
-
-*,
-*::before,
-*::after {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  background-color: whitesmoke;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-}
-
-header.header {
-  display: -ms-grid;
-  display: grid;
-  place-items: center;
-  background-color: #282c34;
-  min-height: 10vh;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-section.main {
-  height: 85vh;
-}
-
-footer.footer {
-  height: 5vh;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-}
-
-.title {
-  font-size: 2.5rem;
-  font-weight: bold;
+.game-container {
+  padding: 0.5rem;
 }
 
 .paddle {
@@ -152,7 +95,6 @@ footer.footer {
   background-color: #c2c2c2;
   width: 45rem;
   height: 10rem;
-  margin: 1rem;
 }
 
 .paddle .paddle-item {
@@ -283,4 +225,78 @@ footer.footer {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
+}
+
+:root {
+  font-family: "Nunito Sans", sans-serif;
+  color: black;
+  font-size: 14px;
+}
+
+*,
+*::before,
+*::after {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: whitesmoke;
+}
+
+header.header {
+  display: -ms-grid;
+  display: grid;
+  place-items: center;
+  background-color: #282c34;
+  min-height: 8vh;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.app-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: space-between;
+      -ms-flex-align: space-between;
+          align-items: space-between;
+  min-height: 87vh;
+}
+
+.events-container,
+.chat-container {
+  min-width: 10vw;
+  border: 1px solid black;
+}
+
+footer.footer {
+  height: 5vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  background-color: #282c34;
+  color: white;
+  font-size: 0.8rem;
+  padding: 0 1rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 600;
 }

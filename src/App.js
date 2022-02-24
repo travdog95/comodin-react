@@ -1,8 +1,11 @@
+import { useState, useEffect } from "react";
 import "./css/main.css";
 import GameBoard from "./components/GameBoard";
 import MessageContainer from "./components/MessageContainer";
 import CardTable from "./components/CardTable";
-import AuditContainer from "./components/AuditContainer";
+import EventsContainer from "./components/EventsContainer";
+import ChatContainer from "./components/ChatContainer";
+import Footer from "./components/Footer";
 import Game from "./models/game";
 
 function App() {
@@ -11,20 +14,41 @@ function App() {
     maxCardsInHand: 5,
   };
 
-  const game = new Game(settings);
-  game.startNewGame();
+  const [isLoading, setIsLoading] = useState(true);
+  const [game, setGame] = useState({});
 
-  console.log(game);
+  useEffect(() => {
+    setIsLoading(true);
+    const game = new Game(settings);
+    game.startNewGame();
+    console.log(game);
+    setGame(game);
+    setIsLoading(false);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (isLoading) {
+    return (
+      <section>
+        <p>Loading...</p>
+      </section>
+    );
+  }
 
   return (
-    <div className="App">
+    <div className="app">
       <header className="header">
         <div className="title">Jokers & Marbles</div>
       </header>
-      <GameBoard settings={settings} />
-      <MessageContainer />
-      <CardTable />
-      <AuditContainer />
+      <div className="app-container">
+        <EventsContainer />
+        <div className="game-container">
+          <GameBoard game={game} />
+          <MessageContainer />
+          <CardTable game={game} />
+        </div>
+        <ChatContainer />
+      </div>
+      <Footer />
     </div>
   );
 }

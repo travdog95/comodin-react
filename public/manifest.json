@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Jokers and Marbles",
+  "name": "Jokers and Marbles Game",
   "icons": [
     {
       "src": "favicon.ico",

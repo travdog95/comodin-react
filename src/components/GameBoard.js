@@ -1,12 +1,11 @@
-import PlayerPaddle from "./PlayerPaddle";
+import PlayerPaddle from "./Player/PlayerPaddle";
 
 function GameBoard(props) {
-  const { playerNames, maxCardsInHand } = props.settings;
+  const players = props.game.players;
   return (
     <div className="game-board">
-      {playerNames.map((playerName, index) => {
-        const className = "";
-        return <PlayerPaddle key={index} className={className} />;
+      {players.map((player, index) => {
+        return <PlayerPaddle key={index} player={player} />;
       })}
     </div>
   );
