@@ -5,7 +5,10 @@ function CardTable(props) {
   return (
     <div>
       {game.players.map((player, index) => {
+        console.log("player", player);
+        console.log("color", player.color);
         const playerIconClasses = `player-icon ${player.color}`;
+        console.log("class", playerIconClasses);
         return (
           <div className="player-card-table" data-deck-container key={index}>
             <div className="player-info">

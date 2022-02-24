@@ -17,10 +17,10 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [game, setGame] = useState({});
 
-  useEffect(() => {
+  useEffect(async () => {
     setIsLoading(true);
     const game = new Game(settings);
-    game.startNewGame();
+    await game.startNewGame();
     console.log(game);
     setGame(game);
     setIsLoading(false);
