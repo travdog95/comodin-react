@@ -1,6 +1,5 @@
-export default {
+const constants = {
   DECK_OF_CARDS_API: "https://deckofcardsapi.com/api/deck/",
-  MARBLE_COLORS: ["yellow", "green", "black", "white", "lightblue", "orange", "red", "blue"],
   NUM_POSITIONS_PER_TRACK: 18,
   CARDS: {
     EXIT_START: ["JACK", "QUEEN", "KING", "ACE"],
@@ -21,6 +20,10 @@ export default {
       10: 10,
     },
     SPLIT_MOVE: ["7", "9"],
+  },
+  MARBLES: {
+    START_POSITIONS: ["start-1", "start-2", "start-3", "start-4", "start-5"],
+    COLORS: ["yellow", "green", "black", "white", "lightblue", "orange", "red", "blue"],
   },
   PADDLE_ITEMS: [
     { class: "spacer-9" },
@@ -175,3 +178,5 @@ export default {
     },
   ],
 };
+
+export default constants;

@@ -1,14 +1,12 @@
-import PlayerHand from "./Player/PlayerHand";
+import Card from "./Player/PlayerCard";
 
 function CardTable(props) {
   const game = props.game;
   return (
     <div>
       {game.players.map((player, index) => {
-        console.log("player", player);
-        console.log("color", player.color);
         const playerIconClasses = `player-icon ${player.color}`;
-        console.log("class", playerIconClasses);
+
         return (
           <div className="player-card-table" data-deck-container key={index}>
             <div className="player-info">
@@ -22,7 +20,7 @@ function CardTable(props) {
               <div className="discard-pile" data-discard-pile></div>
               <div className="hand" data-hand>
                 {player.hand.map((card, index) => {
-                  return <PlayerHand key={index} card={card} />;
+                  return <Card key={index} card={card} />;
                 })}
               </div>
             </div>

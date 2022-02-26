@@ -1,7 +1,7 @@
 import Constants from "../helpers/constants";
 
 export default class Deck {
-  constructor(id, numOfDecks) {
+  constructor(numOfDecks, id) {
     this.id = id;
     this.numOfDecks = numOfDecks;
   }

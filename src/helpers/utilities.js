@@ -1,4 +1,4 @@
-export default {
+const utilities = {
   getMarblePositionValue(position) {
     return parseInt(position.substring(position.indexOf("-") + 1));
   },
@@ -6,3 +6,5 @@ export default {
     return track === numPlayers ? 1 : track + 1;
   },
 };
+
+export default utilities;

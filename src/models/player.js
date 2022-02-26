@@ -1,6 +1,3 @@
-import constants from "../helpers/constants";
-import utils from "../helpers/utilities";
-
 export default class Player {
   constructor(id, screenName, settings, color, deck, hand, marbles) {
     this.id = id;
@@ -8,23 +5,10 @@ export default class Player {
     this.settings = settings;
     this.color = color;
     this.deck = deck;
-    this.hand = hand;
-    this.marbles = marbles;
+    this.hand = hand === undefined ? [] : hand;
+    this.marbles = marbles === undefined ? [] : marbles;
     this.discardedCard = {};
-    // this.paddleElement = "";
-    // this.deckElement = "";
-    // this.deckContainer = "";
-    // this.playerIconElement = "";
-    // this.handElement = "";
-    // this.discardPileElement = "";
-    // this.drawPileElement = "";
-    // this.exitPosition = "";
-    // this.doorPosition = "";
   }
-
-  // get marbleElements() {
-  //   return document.querySelectorAll(`[data-player="${this.id}"]`);
-  // }
 
   async drawCard() {
     const cards = await this.deck.drawCards(1);
@@ -171,18 +155,6 @@ export default class Player {
   // marbleHandler(e) {
   //   const marbleElement = e.target;
   //   this.moveMarble(this.discardedCard, marbleElement);
-  // }
-
-  // updateTrackAttributes() {
-  //   const trackElements = this.paddleElement.querySelectorAll("[data-track]");
-  //   trackElements.forEach((trackElement) => {
-  //     const position = `${this.id}-${trackElement.dataset.position}`;
-  //     trackElement.dataset.track = this.id;
-  //     trackElement.dataset.position = position;
-  //   });
-
-  //   this.exitPosition = this.paddleElement.querySelector("[data-exit]");
-  //   this.doorPosition = this.paddleElement.querySelector("[data-door]");
   // }
 
   // removeMarbleClickability() {

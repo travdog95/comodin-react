@@ -5,7 +5,7 @@ function GameBoard(props) {
   return (
     <div className="game-board">
       {players.map((player, index) => {
-        return <PlayerPaddle key={index} player={player} />;
+        return <PlayerPaddle key={index} player={player} game={props.game} />;
       })}
     </div>
   );
