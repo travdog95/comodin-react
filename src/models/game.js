@@ -5,6 +5,7 @@ export default class Game {
     this.players = players;
     this.turn = "";
     this.turnOrder = [];
+    this.events = [];
   }
 
   get newId() {

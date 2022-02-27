@@ -10,12 +10,12 @@ export default class Player {
     this.discardedCard = {};
   }
 
-  async drawCard() {
-    const cards = await this.deck.drawCards(1);
-    const card = cards[0];
-    this.hand.push(card);
-    // UI.drawCard(card, this, `${this.screenName} drew a card.`);
-  }
+  // async drawCard() {
+  //   const cards = await this.deck.drawCards(1);
+  //   const card = cards[0];
+  //   this.hand.push(card);
+  //   // UI.drawCard(card, this, `${this.screenName} drew a card.`);
+  // }
 
   // removeCardFromHand(card) {
   //   let newHand = [];

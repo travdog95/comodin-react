@@ -93,7 +93,7 @@ function App() {
         <div className="title">Jokers & Marbles</div>
       </header>
       <div className="app-container">
-        <EventsContainer />
+        <EventsContainer events={game.events} />
         <div className="game-container">
           <GameBoard game={game} />
           <MessageContainer />
