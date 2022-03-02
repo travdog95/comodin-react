@@ -1,0 +1,20 @@
+.button {
+  width: auto;
+  height: 4rem;
+  background: var(--lightest-gray);
+  text-transform: uppercase;
+  color: var(--accent-color);
+  font-weight: 700;
+  letter-spacing: 1px;
+  border: 1px solid black;
+  font-size: 1.2rem;
+  outline: none;
+  padding: 0 1.5rem;
+  transition: all 0.25s ease-in-out;
+}
+
+.button:hover {
+  cursor: pointer;
+  background: black;
+  color: white;
+}

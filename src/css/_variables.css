@@ -1,0 +1,17 @@
+:root {
+  /* Colors */
+  --lightest-gray: hsl(0, 0%, 96%);
+  --accent-color: hsl(0, 100%, 40%);
+  --light-gray: hsl(0, 0%, 76%);
+  --medium-gray: hsl(0, 0%, 46%);
+  --dark-gray: hsl(0, 0%, 5%);
+  --modal-background: hsla(0, 0%, 76%, 0.7);
+  --background-color: hsl(220, 13%, 18%);
+
+  --animation-duration: 200ms;
+  --animation-timing-curve: ease-in-out;
+  --paddle-height: 10rem;
+  --paddle-width: var(--paddle-height) * 4.5;
+  --card-width: 6rem;
+  --card-height: var(--card-width) * 1.39;
+}

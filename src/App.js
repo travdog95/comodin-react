@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
 import "./css/main.css";
+import "./css/_variables.css";
+
+import Modal from "./components/UI/Modal";
 import GameBoard from "./components/GameBoard";
 import MessageContainer from "./components/MessageContainer";
 import CardTable from "./components/CardTable";
 import EventsContainer from "./components/EventsContainer";
 import ChatContainer from "./components/ChatContainer";
 import Footer from "./components/Footer";
+
 import Game from "./models/game";
 import Player from "./models/player";
 import Deck from "./models/deck";
@@ -19,6 +23,7 @@ function App() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [game, setGame] = useState({});
+  const [showModal, setShowModal] = useState();
 
   const createGame = async () => {
     const promises = settings.playerNames.map(async (playerName, index) => {
@@ -87,22 +92,37 @@ function App() {
     );
   }
 
+  const showModalHandler = () => {
+    setShowModal({
+      title: "Fancy Modal Title",
+      message: "Fancy modal message",
+    });
+  };
+
+  const closeModalHandler = () => {
+    setShowModal(null);
+  };
+
   return (
-    <div className="app">
+    <>
+      {showModal && (
+        <Modal title={showModal.title} message={showModal.message} onConfirm={closeModalHandler} />
+      )}
+
       <header className="header">
         <div className="title">Jokers & Marbles</div>
       </header>
       <div className="app-container">
         <EventsContainer events={game.events} />
         <div className="game-container">
-          <GameBoard game={game} />
+          <GameBoard game={game} onClickShowModal={showModalHandler} />
           <MessageContainer />
           <CardTable game={game} />
         </div>
         <ChatContainer />
       </div>
       <Footer />
-    </div>
+    </>
   );
 }
 

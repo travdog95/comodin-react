@@ -1,27 +1,13 @@
-import React, { useState } from "react";
-
 const PlayerCard = (props) => {
   const card = props.card;
   const suit = card.suit;
   const alt = `${card.value} of ${suit}`;
 
-  const cardMouseEnterHandler = (e) => {
-    // console.log("show marbles");
-    setMarblesShown(true);
-  };
-
-  const cardMouseLeaveHandler = (e) => {
-    // console.log("hide marbles");
-    setMarblesShown(false);
-  };
-
-  const [marblesShown, setMarblesShown] = useState(false);
-
   return (
     <div
       onClick={props.onClickCard}
-      onMouseEnter={cardMouseEnterHandler}
-      onMouseLeave={cardMouseLeaveHandler}
+      onMouseEnter={props.onMouseEnterCard}
+      onMouseLeave={props.onMouseLeaveCard}
     >
       <img
         src={card.image}
