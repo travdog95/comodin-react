@@ -10,6 +10,7 @@ function PlayerPaddleItem(props) {
   let className = `paddle-item ${item.class}`;
   const label = item.label ? item.label : "";
 
+  // If position on board
   if (item.position) {
     paddleBoardPlayer.marbles.forEach((marble) => {
       //Place marble
@@ -28,7 +29,7 @@ function PlayerPaddleItem(props) {
             className += " moveable";
           }
         });
-        console.log("clickable", clickableMarbles);
+        // console.log("clickable", clickableMarbles);
         //Highlight clickable marble
         clickableMarbles.forEach((clickableMarble) => {
           if (
