@@ -1,23 +1,38 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 
 import PlayerCard from "./PlayerCard";
 import PlayerDiscardPile from "./PlayerDiscardPile";
 import constants from "../../helpers/constants";
 
 const PlayerCardTable = (props) => {
+  const dispatch = useDispatch();
   const game = props.game;
   const player = props.player;
   const playerIconClasses = `player-icon ${player.color}`;
 
   const [hand, setHand] = useState(player.hand);
   const [discardedCard, setDiscardedCard] = useState(player.discardedCard);
-  const [moveableMarbles, setMoveableMarbles] = useState([]);
+
+  const isMarblePlayable = (marble, card) => {
+    // Marbles in start
+    if (marble.position.indexOf("start") !== -1 && marble.paddleBoardPlayerId === player.id) {
+      if (constants.CARDS.EXIT_START.includes(card.value)) {
+        return true;
+      }
+    }
+
+    // Marbles on the track
+    if (marble.position.indexOf("track") !== -1) {
+      // if (this.noMarblesInPath(marbleElement, card.value))
+      return true;
+    }
+    return false;
+  };
 
   const cardMouseEnterHandler = (e) => {
     // console.log("show moveable marbles");
     const cardElement = e.target;
-    let marbles = [];
-
     const card = {
       src: cardElement.src,
       value: cardElement.dataset.value,
@@ -25,28 +40,17 @@ const PlayerCardTable = (props) => {
       suit: cardElement.dataset.suit,
     };
 
+    let marbles = [];
     player.marbles.forEach((marble) => {
-      // //Marbles in start
-      if (marble.position.indexOf("start") !== -1 && marble.paddleBoardPlayerId === player.id) {
-        if (constants.CARDS.EXIT_START.includes(card.value)) {
-          marbles.push(marble);
-        }
-      }
-
-      // //Marbles on the track
-      if (marble.position.indexOf("track") !== -1) {
-        // if (this.noMarblesInPath(marbleElement, card.value))
-        marbles.push(marble);
-      }
+      if (isMarblePlayable(marble, card)) marbles.push(marble);
     });
-    console.log(marbles);
 
-    setMoveableMarbles(marbles);
+    dispatch({ type: "set-moveable-marbles", marbles: marbles });
   };
 
   const cardMouseLeaveHandler = (e) => {
-    console.log("hide moveable marbles");
-    setMoveableMarbles([]);
+    // console.log("hide moveable marbles");
+    dispatch({ type: "set-moveable-marbles", marbles: [] });
   };
 
   const cardClickHandler = (e) => {
@@ -63,6 +67,13 @@ const PlayerCardTable = (props) => {
       setHand((prevHand) => {
         return [...prevHand.filter((cardInHand) => cardInHand.code !== card.dataset.code)];
       });
+
+      let marbles = [];
+      player.marbles.forEach((marble) => {
+        if (isMarblePlayable(marble, card)) marbles.push(marble);
+      });
+
+      dispatch({ type: "set-clickable-marbles", marbles: marbles });
     } else {
       console.log("You need to move a marble!");
     }
