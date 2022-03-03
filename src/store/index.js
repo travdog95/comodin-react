@@ -1,9 +1,12 @@
 import { createStore } from "redux";
+import { createSlice, createSllice } from "@reduxjs/toolkit";
 
 const initialState = {
   moveableMarbles: [],
   clickableMarbles: [],
 };
+
+createSlice({ name: })
 const gameReducer = (state = initialState, action) => {
   switch (action.type) {
     case "set-moveable-marbles":
