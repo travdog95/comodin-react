@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 
+import { gameActions, uiActions } from "../../store/index";
+
 import PlayerCard from "./PlayerCard";
 import PlayerDiscardPile from "./PlayerDiscardPile";
 import constants from "../../helpers/constants";
@@ -45,27 +47,27 @@ const PlayerCardTable = (props) => {
       if (isMarblePlayable(marble, card)) marbles.push(marble);
     });
 
-    dispatch({ type: "set-moveable-marbles", marbles: marbles });
+    dispatch(gameActions.setMoveableMarbles(marbles));
   };
 
   const cardMouseLeaveHandler = (e) => {
     // console.log("hide moveable marbles");
-    dispatch({ type: "set-moveable-marbles", marbles: [] });
+    dispatch(gameActions.setMoveableMarbles([]));
   };
 
   const cardClickHandler = (e) => {
     if (hand.length === game.settings.maxCardsInHand) {
-      const card = e.target;
-
-      setDiscardedCard({
-        src: card.src,
-        value: card.dataset.value,
-        code: card.dataset.code,
-        suit: card.dataset.suit,
-      });
+      const cardElement = e.target;
+      const card = {
+        src: cardElement.src,
+        value: cardElement.dataset.value,
+        code: cardElement.dataset.code,
+        suit: cardElement.dataset.suit,
+      };
+      setDiscardedCard(card);
 
       setHand((prevHand) => {
-        return [...prevHand.filter((cardInHand) => cardInHand.code !== card.dataset.code)];
+        return [...prevHand.filter((cardInHand) => cardInHand.code !== card.code)];
       });
 
       let marbles = [];
@@ -73,9 +75,10 @@ const PlayerCardTable = (props) => {
         if (isMarblePlayable(marble, card)) marbles.push(marble);
       });
 
-      dispatch({ type: "set-clickable-marbles", marbles: marbles });
+      dispatch(gameActions.setMoveableMarbles([]));
+      dispatch(gameActions.setClickableMarbles(marbles));
     } else {
-      console.log("You need to move a marble!");
+      dispatch(uiActions.sendMessage({ type: "alert", message: "You need to move a marble!" }));
     }
   };
 

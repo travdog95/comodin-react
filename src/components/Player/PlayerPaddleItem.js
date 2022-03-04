@@ -1,8 +1,8 @@
 import { useSelector } from "react-redux";
 
 function PlayerPaddleItem(props) {
-  const moveableMarbles = useSelector((state) => state.moveableMarbles);
-  const clickableMarbles = useSelector((state) => state.clickableMarbles);
+  const moveableMarbles = useSelector((state) => state.game.moveableMarbles);
+  const clickableMarbles = useSelector((state) => state.game.clickableMarbles);
 
   const item = props.item;
   // const game = props.game;

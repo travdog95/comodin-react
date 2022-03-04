@@ -1,4 +1,8 @@
 import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
+import { uiActions } from "./store/index";
+
 import "./css/main.css";
 import "./css/_variables.css";
 
@@ -16,6 +20,9 @@ import Deck from "./models/deck";
 import constants from "./helpers/constants";
 
 function App() {
+  const dispatch = useDispatch();
+  const showModal = useSelector((state) => state.ui.showModal);
+
   const settings = {
     playerNames: ["Travis", "Kimmo"],
     maxCardsInHand: 5,
@@ -23,7 +30,6 @@ function App() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [game, setGame] = useState({});
-  const [showModal, setShowModal] = useState();
 
   const createGame = async () => {
     const promises = settings.playerNames.map(async (playerName, index) => {
@@ -92,15 +98,8 @@ function App() {
     );
   }
 
-  const showModalHandler = () => {
-    setShowModal({
-      title: "Fancy Modal Title",
-      message: "Fancy modal message",
-    });
-  };
-
   const closeModalHandler = () => {
-    setShowModal(null);
+    dispatch(uiActions.showModal(null));
   };
 
   return (
@@ -115,7 +114,7 @@ function App() {
       <div className="app-container">
         <EventsContainer events={game.events} />
         <div className="game-container">
-          <GameBoard game={game} onClickShowModal={showModalHandler} />
+          <GameBoard game={game} />
           <MessageContainer />
           <CardTable game={game} />
         </div>

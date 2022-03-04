@@ -1,28 +1,50 @@
-import { createStore } from "redux";
-import { createSlice, createSlice } from "@reduxjs/toolkit";
+import { createSlice, configureStore } from "@reduxjs/toolkit";
 
-const initialState = {
+const gameInitialState = {
   moveableMarbles: [],
   clickableMarbles: [],
 };
 
-const gameReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case "set-moveable-marbles":
-      return {
-        moveableMarbles: action.marbles,
-        clickableMarbles: state.clickableMarbles,
-      };
-    case "set-clickable-marbles":
-      return {
-        clickableMarbles: action.marbles,
-        moveableMarbles: state.moveableMarbles,
-      };
-  }
+const gameSlice = createSlice({
+  name: "game",
+  initialState: gameInitialState,
+  reducers: {
+    setMoveableMarbles(state, action) {
+      state.moveableMarbles = action.payload;
+    },
+    setClickableMarbles(state, action) {
+      state.clickableMarbles = action.payload;
+    },
+  },
+});
 
-  return state;
+const uiInitialState = {
+  showModal: null, //{title: "Fancy Title", message: "Fancy message!"}
+  auditEvents: [],
+  sendMessage: null, //{ type: "Error", className: "error", message: ""}
 };
 
-const store = createStore(gameReducer);
+const uiSlice = createSlice({
+  name: "ui",
+  initialState: uiInitialState,
+  reducers: {
+    showModal(state, action) {
+      state.showModal = action.payload;
+    },
+    auditEvents(state, action) {
+      state.auditEvents = action.payload;
+    },
+    sendMessage(state, action) {
+      state.sendMessage = action.payload;
+    },
+  },
+});
+
+const store = configureStore({
+  reducer: { game: gameSlice.reducer, ui: uiSlice.reducer },
+});
+
+export const gameActions = gameSlice.actions;
+export const uiActions = uiSlice.actions;
 
 export default store;
