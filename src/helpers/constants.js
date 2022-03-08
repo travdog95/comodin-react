@@ -177,6 +177,7 @@ const constants = {
       label: 1,
     },
   ],
+  MESSAGE_TYPES: ["primary", "secondary", "success", "warning", "danger", "info", "light", "dark"],
 };
 
 export default constants;

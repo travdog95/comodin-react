@@ -1,20 +1,21 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import { gameActions, uiActions } from "../../store/index";
-
 import PlayerCard from "./PlayerCard";
 import PlayerDiscardPile from "./PlayerDiscardPile";
 import constants from "../../helpers/constants";
+import tko from "../../helpers/utilities";
 
 const PlayerCardTable = (props) => {
   const dispatch = useDispatch();
   const game = props.game;
   const player = props.player;
   const playerIconClasses = `player-icon ${player.color}`;
+  const discardedCard = useSelector((state) => state.game.discardedCard);
 
   const [hand, setHand] = useState(player.hand);
-  const [discardedCard, setDiscardedCard] = useState(player.discardedCard);
+  // const [discardedCard, setDiscardedCard] = useState(player.discardedCard);
 
   const isMarblePlayable = (marble, card) => {
     // Marbles in start
@@ -63,8 +64,9 @@ const PlayerCardTable = (props) => {
         value: cardElement.dataset.value,
         code: cardElement.dataset.code,
         suit: cardElement.dataset.suit,
+        playerId: player.id,
       };
-      setDiscardedCard(card);
+      dispatch(gameActions.setDiscardedCard(card));
 
       setHand((prevHand) => {
         return [...prevHand.filter((cardInHand) => cardInHand.code !== card.code)];
@@ -77,19 +79,27 @@ const PlayerCardTable = (props) => {
 
       dispatch(gameActions.setMoveableMarbles([]));
       dispatch(gameActions.setClickableMarbles(marbles));
+      dispatch(
+        uiActions.addAuditEvent(`${player.screenName} discarded ${card.value} of ${card.suit}`)
+      );
     } else {
-      dispatch(uiActions.sendMessage({ type: "alert", message: "You need to move a marble!" }));
+      dispatch(uiActions.sendMessage({ type: "info", message: "You need to move a marble!" }));
     }
   };
 
   const drawPileClickHandler = async (e) => {
     if (hand.length === game.settings.maxCardsInHand) {
-      console.log("Hand is full.");
+      dispatch(uiActions.sendMessage({ type: "info", message: "Your hand is already full!" }));
     } else {
       const drawnCards = await drawCards(1);
       setHand((prevHand) => {
         return [...prevHand, drawnCards[0]];
       });
+      dispatch(uiActions.addAuditEvent(`${player.screenName} drew a card.`));
+      //Advance to the next player's turn
+      const nextPlayerId = tko.getNextPlayerId(player.id, game.players);
+
+      console.log(nextPlayerId);
     }
   };
 
@@ -119,7 +129,7 @@ const PlayerCardTable = (props) => {
           <img src={require("../../img/back.png")} alt="Draw Pile" />
         </div>
         <div className="discard-pile">
-          <PlayerDiscardPile card={discardedCard} />
+          <PlayerDiscardPile card={discardedCard} player={player} />
         </div>
         <div className="hand">
           {hand.map((card, index) => {

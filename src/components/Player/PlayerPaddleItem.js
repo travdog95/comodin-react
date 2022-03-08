@@ -3,9 +3,9 @@ import { useSelector } from "react-redux";
 function PlayerPaddleItem(props) {
   const moveableMarbles = useSelector((state) => state.game.moveableMarbles);
   const clickableMarbles = useSelector((state) => state.game.clickableMarbles);
+  let clickable = false;
 
   const item = props.item;
-  // const game = props.game;
   const paddleBoardPlayer = props.paddleBoardPlayer;
   let className = `paddle-item ${item.class}`;
   const label = item.label ? item.label : "";
@@ -29,7 +29,7 @@ function PlayerPaddleItem(props) {
             className += " moveable";
           }
         });
-        // console.log("clickable", clickableMarbles);
+
         //Highlight clickable marble
         clickableMarbles.forEach((clickableMarble) => {
           if (
@@ -37,13 +37,34 @@ function PlayerPaddleItem(props) {
             clickableMarble.paddleBoardPlayerId === paddleBoardPlayer.id
           ) {
             className += " clickable";
+            clickable = true;
           }
         });
       }
     });
   }
 
-  return <div className={className}>{label}</div>;
+  const marbleClickHandler = (e) => {
+    const marbleElement = e.target;
+
+    console.log(marbleElement);
+    // if (marbleElement.dataset.start) {
+    //   if (constants.CARDS.EXIT_START.includes(card.value)) {
+    //     //Update marbles property
+    //     toPosition = `${this.id}-9`;
+    //     this.marbles[marbleNum] = toPosition;
+    //     //End turn
+    //     this.endTurn();
+    //     return;
+    //   }
+    // }
+  };
+
+  return (
+    <div className={className} onClick={clickable ? marbleClickHandler : undefined}>
+      {label}
+    </div>
+  );
 }
 
 export default PlayerPaddleItem;

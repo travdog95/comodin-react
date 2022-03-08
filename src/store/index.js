@@ -3,6 +3,8 @@ import { createSlice, configureStore } from "@reduxjs/toolkit";
 const gameInitialState = {
   moveableMarbles: [],
   clickableMarbles: [],
+  discardedCard: {},
+  currentPlayerId: 1,
 };
 
 const gameSlice = createSlice({
@@ -14,6 +16,12 @@ const gameSlice = createSlice({
     },
     setClickableMarbles(state, action) {
       state.clickableMarbles = action.payload;
+    },
+    setDiscardedCard(state, action) {
+      state.discardedCard = action.payload;
+    },
+    findNextPlayer(state, action) {
+      state.currentPlayerId = action.payload;
     },
   },
 });
@@ -33,6 +41,9 @@ const uiSlice = createSlice({
     },
     auditEvents(state, action) {
       state.auditEvents = action.payload;
+    },
+    addAuditEvent(state, action) {
+      state.auditEvents.push(action.payload);
     },
     sendMessage(state, action) {
       state.sendMessage = action.payload;

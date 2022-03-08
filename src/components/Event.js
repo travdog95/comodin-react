@@ -1,14 +1,6 @@
 const Event = (props) => {
-  const game = props.game;
-  {
-    game.events.map((event, index) => {
-      return (
-        <div className="event" key={index}>
-          {event}
-        </div>
-      );
-    });
-  }
+  const event = props.event;
+  return <div className="event">{event}</div>;
 };
 
 export default Event;

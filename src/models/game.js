@@ -4,11 +4,15 @@ export default class Game {
     this.settings = settings;
     this.players = players;
     this.turn = "";
-    this.turnOrder = [];
+    this.turnOrder = this.setTurnOrder;
     this.events = [];
   }
 
   get newId() {
     return Date.now();
+  }
+
+  get setTurnOrder() {
+    return this.players.map((player) => player.id);
   }
 }
