@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import { uiActions } from "./store/index";
+import { uiActions, gameActions } from "./store/index";
 
 import "./css/main.css";
 import "./css/_variables.css";
@@ -32,9 +32,10 @@ function App() {
   const [game, setGame] = useState({});
 
   const createGame = async () => {
+    let gameBoard = {};
     const promises = settings.playerNames.map(async (playerName, index) => {
       const playerId = index + 1;
-
+      gameBoard[playerId] = {};
       //Get new deck from card API
       const deck_id = await newDeck(1);
 
@@ -43,7 +44,15 @@ function App() {
 
       const hand = await deck.drawCards(settings.maxCardsInHand);
 
-      const marbles = constants.MARBLES.START_POSITIONS.map((marblePosition) => {
+      //Build gameBoard
+      constants.PADDLE_ITEMS.forEach((item) => {
+        if (item.position) {
+          gameBoard[playerId][item.position] = {};
+        }
+      });
+
+      const marbles = constants.MARBLES.START_POSITIONS.map((marblePosition, index) => {
+        gameBoard[playerId][marblePosition] = { playerId, id: index + 1 };
         return {
           paddleBoardPlayerId: playerId,
           position: marblePosition,
@@ -63,7 +72,7 @@ function App() {
 
     const players = await Promise.all(promises);
 
-    const game = new Game(players, settings);
+    const game = new Game(players, gameBoard, settings);
 
     return game;
   };
@@ -84,6 +93,7 @@ function App() {
       setIsLoading(true);
       const game = await createGame(settings);
       console.log(game);
+      dispatch(gameActions.updateGameBoard(game.gameBoard));
       setGame(game);
       setIsLoading(false);
     };
@@ -112,7 +122,7 @@ function App() {
         <div className="title">Jokers & Marbles</div>
       </header>
       <div className="app-container">
-        <EventsContainer events={game.events} />
+        <EventsContainer />
         <div className="game-container">
           <GameBoard game={game} />
           <MessageContainer />

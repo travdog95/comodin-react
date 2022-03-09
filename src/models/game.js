@@ -1,11 +1,10 @@
 export default class Game {
-  constructor(players, settings) {
+  constructor(players, gameBoard, settings) {
     this.id = this.newId;
     this.settings = settings;
     this.players = players;
-    this.turn = "";
     this.turnOrder = this.setTurnOrder;
-    this.events = [];
+    this.gameBoard = gameBoard;
   }
 
   get newId() {

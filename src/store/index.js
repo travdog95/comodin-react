@@ -5,6 +5,7 @@ const gameInitialState = {
   clickableMarbles: [],
   discardedCard: {},
   currentPlayerId: 1,
+  gameBoard: {},
 };
 
 const gameSlice = createSlice({
@@ -22,6 +23,9 @@ const gameSlice = createSlice({
     },
     findNextPlayer(state, action) {
       state.currentPlayerId = action.payload;
+    },
+    updateGameBoard(state, action) {
+      state.gameBoard = action.payload;
     },
   },
 });

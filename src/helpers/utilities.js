@@ -18,6 +18,11 @@ const utilities = {
 
     return players[nextPlayerIdIndex].id;
   },
+  getPlayerById(players, playerId) {
+    const playerArray = players.filter((player) => player.id === playerId);
+
+    return playerArray[0];
+  },
 };
 
 export default utilities;

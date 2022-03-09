@@ -98,8 +98,6 @@ const PlayerCardTable = (props) => {
       dispatch(uiActions.addAuditEvent(`${player.screenName} drew a card.`));
       //Advance to the next player's turn
       const nextPlayerId = tko.getNextPlayerId(player.id, game.players);
-
-      console.log(nextPlayerId);
     }
   };
 
