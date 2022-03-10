@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import { uiActions, gameActions } from "./store/index";
+import { gameActions } from "./store/game-reducer";
+import { uiActions } from "./store/ui-reducer";
 
 import "./css/main.css";
 import "./css/_variables.css";

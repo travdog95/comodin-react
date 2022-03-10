@@ -1,3 +1,5 @@
+import constants from "./constants";
+
 const utilities = {
   getMarblePositionValue(position) {
     return parseInt(position.substring(position.indexOf("-") + 1));
@@ -22,6 +24,75 @@ const utilities = {
     const playerArray = players.filter((player) => player.id === playerId);
 
     return playerArray[0];
+  },
+  noMarblesInPath(gameBoard, marble, player, card) {
+    const paddleBoardId = marble.paddleBoardPlayerId;
+    const positionValue = this.getMarblePositionValue(marble.position);
+    const cardValue = card.value;
+    const cardNumericalValue = constants.CARDS.VALUES[cardValue];
+
+    let p = 1;
+    let currentPositionValue = 0;
+    let currentPaddleBoardId = "";
+    let currentPosition;
+
+    //Check behind
+    if (constants.CARDS.MOVE_BACKWARD.includes(card.value)) {
+      return false;
+    } else {
+      //If marble in start position, check exit for own marble
+      if (
+        marble.position.indexOf("start") !== -1 &&
+        this.doesPositionHaveOwnMarble(gameBoard[player.id]["track-9"], player)
+      ) {
+        return false;
+      }
+
+      //If marble is on the track
+      if (marble.position.indexOf("track") !== -1) {
+        for (p; p <= cardNumericalValue; p++) {
+          if (positionValue + p > constants.NUM_POSITIONS_PER_TRACK) {
+            currentPositionValue = positionValue + p - constants.NUM_POSITIONS_PER_TRACK;
+            currentPaddleBoardId = this.getNextTrack(paddleBoardId);
+          } else {
+            currentPositionValue = positionValue + p;
+            currentPaddleBoardId = paddleBoardId;
+          }
+
+          currentPosition = gameBoard[currentPaddleBoardId][`track-${currentPositionValue}`];
+
+          //If there is one of the player's own marble, return false;
+          if (this.doesPositionHaveOwnMarble(currentPosition, player)) return false;
+        }
+      }
+
+      return true;
+    }
+  },
+  doesPositionHaveOwnMarble(position, player) {
+    return position.playerId === player.id;
+  },
+  getPlayerMarbles(gameBoard, player) {
+    let marbles = [];
+
+    //Each paddleBoard
+    Object.keys(gameBoard).forEach((paddleBoardId) => {
+      const paddleBoard = gameBoard[paddleBoardId];
+      //Iterate over each position
+      Object.keys(paddleBoard).forEach((position) => {
+        const marblePlayerId = paddleBoard[position].playerId;
+
+        if (marblePlayerId === player.id) {
+          const marbleId = paddleBoard[position].id;
+          marbles.push({
+            paddleBoardPlayerId: marblePlayerId,
+            id: marbleId,
+            position,
+          });
+        }
+      });
+    });
+    return marbles;
   },
 };
 

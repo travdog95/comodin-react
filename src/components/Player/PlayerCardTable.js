@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import { gameActions, uiActions } from "../../store/index";
+import { gameActions } from "../../store/game-reducer";
+import { uiActions } from "../../store/ui-reducer";
 import PlayerCard from "./PlayerCard";
 import PlayerDiscardPile from "./PlayerDiscardPile";
 import constants from "../../helpers/constants";
@@ -13,22 +14,25 @@ const PlayerCardTable = (props) => {
   const player = props.player;
   const playerIconClasses = `player-icon ${player.color}`;
   const discardedCard = useSelector((state) => state.game.discardedCard);
+  const gameBoard = useSelector((state) => state.game.gameBoard);
+  const playerMarbles = tko.getPlayerMarbles(gameBoard, player);
 
   const [hand, setHand] = useState(player.hand);
-  // const [discardedCard, setDiscardedCard] = useState(player.discardedCard);
 
   const isMarblePlayable = (marble, card) => {
     // Marbles in start
     if (marble.position.indexOf("start") !== -1 && marble.paddleBoardPlayerId === player.id) {
-      if (constants.CARDS.EXIT_START.includes(card.value)) {
+      if (
+        constants.CARDS.EXIT_START.includes(card.value) &&
+        tko.noMarblesInPath(gameBoard, marble, player, card)
+      ) {
         return true;
       }
     }
 
     // Marbles on the track
     if (marble.position.indexOf("track") !== -1) {
-      // if (this.noMarblesInPath(marbleElement, card.value))
-      return true;
+      return tko.noMarblesInPath(gameBoard, marble, player, card);
     }
     return false;
   };
@@ -43,16 +47,15 @@ const PlayerCardTable = (props) => {
       suit: cardElement.dataset.suit,
     };
 
-    let marbles = [];
-    player.marbles.forEach((marble) => {
-      if (isMarblePlayable(marble, card)) marbles.push(marble);
+    let playableMarbles = [];
+    playerMarbles.forEach((marble) => {
+      if (isMarblePlayable(marble, card)) playableMarbles.push(marble);
     });
 
-    dispatch(gameActions.setMoveableMarbles(marbles));
+    dispatch(gameActions.setMoveableMarbles(playableMarbles));
   };
 
   const cardMouseLeaveHandler = (e) => {
-    // console.log("hide moveable marbles");
     dispatch(gameActions.setMoveableMarbles([]));
   };
 
@@ -72,13 +75,13 @@ const PlayerCardTable = (props) => {
         return [...prevHand.filter((cardInHand) => cardInHand.code !== card.code)];
       });
 
-      let marbles = [];
-      player.marbles.forEach((marble) => {
-        if (isMarblePlayable(marble, card)) marbles.push(marble);
+      let clickableMarbles = [];
+      playerMarbles.forEach((marble) => {
+        if (isMarblePlayable(marble, card)) clickableMarbles.push(marble);
       });
 
       dispatch(gameActions.setMoveableMarbles([]));
-      dispatch(gameActions.setClickableMarbles(marbles));
+      dispatch(gameActions.setClickableMarbles(clickableMarbles));
       dispatch(
         uiActions.addAuditEvent(`${player.screenName} discarded ${card.value} of ${card.suit}`)
       );

@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 
-import { gameActions, uiActions } from "../../store/index";
+import { gameActions } from "../../store/game-reducer";
 import constants from "../../helpers/constants";
 import tko from "../../helpers/utilities";
 
@@ -53,18 +53,26 @@ function PlayerPaddleItem(props) {
   }
 
   const marbleClickHandler = (e) => {
+    console.log("marble clicked");
+    const fromPosition = item.position;
+    const fromPositionValue = tko.getMarblePositionValue(fromPosition);
+    const fromPaddleBoardId = paddleBoardPlayer.id;
+    const cardValue = discardedCard.value;
     let toPosition = "";
+    let toPositionValue = 0;
+    let toPaddleBoardId = 0;
     let newGameBoard = { ...gameBoard };
+
     //Move marble from start
-    if (item.position.indexOf("start") >= 0) {
-      if (constants.CARDS.EXIT_START.includes(discardedCard.value)) {
+    if (fromPosition.indexOf("start") >= 0) {
+      if (constants.CARDS.EXIT_START.includes(cardValue)) {
         toPosition = "track-9";
 
         //Update to and from positions
-        newGameBoard[paddleBoardPlayer.id] = {
-          ...newGameBoard[paddleBoardPlayer.id],
+        newGameBoard[fromPaddleBoardId] = {
+          ...newGameBoard[fromPaddleBoardId],
           [toPosition]: marble,
-          [item.position]: {},
+          [fromPosition]: {},
         };
 
         //Update board and UI
@@ -75,6 +83,41 @@ function PlayerPaddleItem(props) {
         //End turn
         return;
       }
+    }
+
+    if (fromPosition.indexOf("track") !== -1) {
+      //Determine direction
+      const direction = constants.CARDS.MOVE_BACKWARD.includes(cardValue) ? -1 : 1;
+      const cardNumericalValue = constants.CARDS.VALUES[cardValue];
+
+      if (fromPositionValue + cardNumericalValue > constants.NUM_POSITIONS_PER_TRACK) {
+        toPositionValue =
+          fromPositionValue + cardNumericalValue - constants.NUM_POSITIONS_PER_TRACK;
+        toPaddleBoardId = tko.getNextTrack(fromPaddleBoardId, game.players.length);
+      } else {
+        toPositionValue = fromPositionValue + cardNumericalValue;
+        toPaddleBoardId = fromPaddleBoardId;
+      }
+
+      toPosition = `track-${toPositionValue}`;
+
+      //Update from position
+      newGameBoard[fromPaddleBoardId] = {
+        ...newGameBoard[fromPaddleBoardId],
+        [fromPosition]: {},
+      };
+
+      //Update to position
+      newGameBoard[toPaddleBoardId] = {
+        ...newGameBoard[toPaddleBoardId],
+        [toPosition]: marble,
+      };
+
+      //Update board and UI
+      dispatch(gameActions.updateGameBoard(newGameBoard));
+
+      //Remove marble clickability
+      dispatch(gameActions.setClickableMarbles([]));
     }
   };
 
