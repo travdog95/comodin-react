@@ -16,7 +16,7 @@ function PlayerPaddleItem(props) {
   let clickable = false;
 
   const item = props.item;
-  const paddleBoardPlayer = props.paddleBoardPlayer;
+  const paddleBoard = props.paddleBoard;
   let className = `paddle-item ${item.class}`;
   const label = item.label ? item.label : "";
   let marble = {};
@@ -24,8 +24,8 @@ function PlayerPaddleItem(props) {
   // If position on board
   if (item.position) {
     //If position has a marble
-    if (Object.keys(gameBoard[paddleBoardPlayer.id][item.position]).length > 0) {
-      marble = gameBoard[paddleBoardPlayer.id][item.position];
+    if (Object.keys(gameBoard[paddleBoard.id][item.position]).length > 0) {
+      marble = gameBoard[paddleBoard.id][item.position];
       const marblePlayer = tko.getPlayerById(game.players, marble.playerId);
       className += ` ${marblePlayer.color}`;
 
@@ -33,7 +33,7 @@ function PlayerPaddleItem(props) {
       moveableMarbles.forEach((moveableMarble) => {
         if (
           moveableMarble.position === item.position &&
-          moveableMarble.paddleBoardPlayerId === paddleBoardPlayer.id
+          moveableMarble.paddleBoardId === paddleBoard.id
         ) {
           className += " moveable";
         }
@@ -43,7 +43,7 @@ function PlayerPaddleItem(props) {
       clickableMarbles.forEach((clickableMarble) => {
         if (
           clickableMarble.position === item.position &&
-          clickableMarble.paddleBoardPlayerId === paddleBoardPlayer.id
+          clickableMarble.paddleBoardId === paddleBoard.id
         ) {
           className += " clickable";
           clickable = true;
@@ -56,7 +56,7 @@ function PlayerPaddleItem(props) {
     console.log("marble clicked");
     const fromPosition = item.position;
     const fromPositionValue = tko.getMarblePositionValue(fromPosition);
-    const fromPaddleBoardId = paddleBoardPlayer.id;
+    const fromPaddleBoardId = paddleBoard.id;
     const cardValue = discardedCard.value;
     let toPosition = "";
     let toPositionValue = 0;
@@ -80,6 +80,9 @@ function PlayerPaddleItem(props) {
 
         //Remove marble clickability
         dispatch(gameActions.setClickableMarbles([]));
+
+        //Draw card
+
         //End turn
         return;
       }
@@ -90,15 +93,25 @@ function PlayerPaddleItem(props) {
       const direction = constants.CARDS.MOVE_BACKWARD.includes(cardValue) ? -1 : 1;
       const cardNumericalValue = constants.CARDS.VALUES[cardValue];
 
-      if (fromPositionValue + cardNumericalValue > constants.NUM_POSITIONS_PER_TRACK) {
-        toPositionValue =
-          fromPositionValue + cardNumericalValue - constants.NUM_POSITIONS_PER_TRACK;
-        toPaddleBoardId = tko.getNextTrack(fromPaddleBoardId, game.players.length);
+      if (direction === 1) {
+        if (fromPositionValue + cardNumericalValue > constants.NUM_POSITIONS_PER_TRACK) {
+          toPositionValue =
+            fromPositionValue + cardNumericalValue - constants.NUM_POSITIONS_PER_TRACK;
+          toPaddleBoardId = tko.getNextTrack(fromPaddleBoardId, game.players.length);
+        } else {
+          toPositionValue = fromPositionValue + cardNumericalValue;
+          toPaddleBoardId = fromPaddleBoardId;
+        }
       } else {
-        toPositionValue = fromPositionValue + cardNumericalValue;
-        toPaddleBoardId = fromPaddleBoardId;
+        if (fromPositionValue - cardNumericalValue <= 0) {
+          toPositionValue =
+            fromPositionValue - cardNumericalValue + constants.NUM_POSITIONS_PER_TRACK;
+          toPaddleBoardId = tko.getNextTrack(fromPaddleBoardId, Object.keys(gameBoard).length);
+        } else {
+          toPositionValue = fromPositionValue - cardNumericalValue;
+          toPaddleBoardId = fromPaddleBoardId;
+        }
       }
-
       toPosition = `track-${toPositionValue}`;
 
       //Update from position

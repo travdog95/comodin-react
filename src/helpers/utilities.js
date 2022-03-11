@@ -26,7 +26,7 @@ const utilities = {
     return playerArray[0];
   },
   noMarblesInPath(gameBoard, marble, player, card) {
-    const paddleBoardId = marble.paddleBoardPlayerId;
+    const paddleBoardId = parseInt(marble.paddleBoardId);
     const positionValue = this.getMarblePositionValue(marble.position);
     const cardValue = card.value;
     const cardNumericalValue = constants.CARDS.VALUES[cardValue];
@@ -38,7 +38,25 @@ const utilities = {
 
     //Check behind
     if (constants.CARDS.MOVE_BACKWARD.includes(card.value)) {
-      return false;
+      if (marble.position.indexOf("track") !== -1) {
+        console.log("moving backwards");
+        for (p; p <= cardNumericalValue; p++) {
+          if (positionValue - p <= 0) {
+            currentPositionValue = positionValue - p + constants.NUM_POSITIONS_PER_TRACK;
+            currentPaddleBoardId = this.getNextTrack(paddleBoardId, Object.keys(gameBoard).length);
+          } else {
+            currentPositionValue = positionValue - p;
+            currentPaddleBoardId = paddleBoardId;
+          }
+
+          currentPosition = gameBoard[currentPaddleBoardId][`track-${currentPositionValue}`];
+
+          //If there is one of the player's own marble, return false;
+          if (this.doesPositionHaveOwnMarble(currentPosition, player)) return false;
+        }
+      }
+
+      return true;
     } else {
       //If marble in start position, check exit for own marble
       if (
@@ -53,7 +71,7 @@ const utilities = {
         for (p; p <= cardNumericalValue; p++) {
           if (positionValue + p > constants.NUM_POSITIONS_PER_TRACK) {
             currentPositionValue = positionValue + p - constants.NUM_POSITIONS_PER_TRACK;
-            currentPaddleBoardId = this.getNextTrack(paddleBoardId);
+            currentPaddleBoardId = this.getNextTrack(paddleBoardId, Object.keys(gameBoard).length);
           } else {
             currentPositionValue = positionValue + p;
             currentPaddleBoardId = paddleBoardId;
@@ -85,8 +103,8 @@ const utilities = {
         if (marblePlayerId === player.id) {
           const marbleId = paddleBoard[position].id;
           marbles.push({
-            paddleBoardPlayerId: marblePlayerId,
-            id: marbleId,
+            paddleBoardId: parseInt(paddleBoardId),
+            id: parseInt(marbleId),
             position,
           });
         }

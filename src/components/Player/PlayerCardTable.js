@@ -21,7 +21,7 @@ const PlayerCardTable = (props) => {
 
   const isMarblePlayable = (marble, card) => {
     // Marbles in start
-    if (marble.position.indexOf("start") !== -1 && marble.paddleBoardPlayerId === player.id) {
+    if (marble.position.indexOf("start") !== -1 && parseInt(marble.paddleBoardId) === player.id) {
       if (
         constants.CARDS.EXIT_START.includes(card.value) &&
         tko.noMarblesInPath(gameBoard, marble, player, card)
@@ -38,7 +38,6 @@ const PlayerCardTable = (props) => {
   };
 
   const cardMouseEnterHandler = (e) => {
-    // console.log("show moveable marbles");
     const cardElement = e.target;
     const card = {
       src: cardElement.src,

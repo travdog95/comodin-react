@@ -55,7 +55,7 @@ function App() {
       const marbles = constants.MARBLES.START_POSITIONS.map((marblePosition, index) => {
         gameBoard[playerId][marblePosition] = { playerId, id: index + 1 };
         return {
-          paddleBoardPlayerId: playerId,
+          paddleBoardId: playerId,
           position: marblePosition,
         };
       });

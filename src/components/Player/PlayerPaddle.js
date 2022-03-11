@@ -8,9 +8,7 @@ const PlayerPaddle = (props) => {
   return (
     <div className={classNames}>
       {constants.PADDLE_ITEMS.map((item, index) => {
-        return (
-          <PlayerPaddleItem item={item} key={index} paddleBoardPlayer={player} game={props.game} />
-        );
+        return <PlayerPaddleItem item={item} key={index} paddleBoard={player} game={props.game} />;
       })}
     </div>
   );
