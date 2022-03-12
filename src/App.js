@@ -9,11 +9,11 @@ import "./css/_variables.css";
 
 import Modal from "./components/UI/Modal";
 import GameBoard from "./components/GameBoard";
-import MessageContainer from "./components/MessageContainer";
 import CardTable from "./components/CardTable";
 import EventsContainer from "./components/EventsContainer";
 import ChatContainer from "./components/ChatContainer";
 import Footer from "./components/Footer";
+import Notification from "./components/UI/Notification";
 
 import Game from "./models/game";
 import Player from "./models/player";
@@ -22,7 +22,8 @@ import constants from "./helpers/constants";
 
 function App() {
   const dispatch = useDispatch();
-  const showModal = useSelector((state) => state.ui.showModal);
+  const modal = useSelector((state) => state.ui.modal);
+  const notification = useSelector((state) => state.ui.notification);
 
   const settings = {
     playerNames: ["Travis", "Kimmo"],
@@ -115,9 +116,7 @@ function App() {
 
   return (
     <>
-      {showModal && (
-        <Modal title={showModal.title} message={showModal.message} onConfirm={closeModalHandler} />
-      )}
+      {modal && <Modal title={modal.title} message={modal.message} onConfirm={closeModalHandler} />}
 
       <header className="header">
         <div className="title">Jokers & Marbles</div>
@@ -126,7 +125,7 @@ function App() {
         <EventsContainer />
         <div className="game-container">
           <GameBoard game={game} />
-          <MessageContainer />
+          {notification && <Notification type={notification.type} message={notification.message} />}
           <CardTable game={game} />
         </div>
         <ChatContainer />

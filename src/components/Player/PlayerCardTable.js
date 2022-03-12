@@ -85,13 +85,17 @@ const PlayerCardTable = (props) => {
         uiActions.addAuditEvent(`${player.screenName} discarded ${card.value} of ${card.suit}`)
       );
     } else {
-      dispatch(uiActions.sendMessage({ type: "info", message: "You need to move a marble!" }));
+      dispatch(
+        uiActions.showNotification({ type: "primary", message: "You need to move a marble!" })
+      );
     }
   };
 
   const drawPileClickHandler = async (e) => {
     if (hand.length === game.settings.maxCardsInHand) {
-      dispatch(uiActions.sendMessage({ type: "info", message: "Your hand is already full!" }));
+      dispatch(
+        uiActions.showNotification({ type: "primary", message: "Your hand is already full!" })
+      );
     } else {
       const drawnCards = await drawCards(1);
       setHand((prevHand) => {

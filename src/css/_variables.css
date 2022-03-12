@@ -8,6 +8,26 @@
   --modal-background: hsla(0, 0%, 76%, 0.7);
   --background-color: hsl(220, 13%, 18%);
 
+  /* Notification Background Colors */
+  --notification-primary-bg-color: hsl(209, 96%, 90%);
+  --notification-secondary-bg-color: #e2e3e5;
+  --notification-success-bg-color: #d4edda;
+  --notification-warning-bg-color: #fff3cd;
+  --notification-danger-bg-color: #f7d7da;
+  --notification-info-bg-color: #d0ecf0;
+  --notification-light-bg-color: #fefefe;
+  --notification-dark-bg-color: #d7d8da;
+
+  /* Notification Font Colors */
+  --notification-primary-color: #34567c;
+  --notification-secondary-color: black;
+  --notification-success-color: #557141;
+  --notification-warning-color: #8c7537;
+  --notification-danger-color: #764f6e;
+  --notification-info-color: #30616c;
+  --notification-light-color: #9e9da1;
+  --notification-dark-color: black;
+
   --animation-duration: 200ms;
   --animation-timing-curve: ease-in-out;
   --paddle-height: 10rem;

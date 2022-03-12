@@ -39,7 +39,6 @@ const utilities = {
     //Check behind
     if (constants.CARDS.MOVE_BACKWARD.includes(card.value)) {
       if (marble.position.indexOf("track") !== -1) {
-        console.log("moving backwards");
         for (p; p <= cardNumericalValue; p++) {
           if (positionValue - p <= 0) {
             currentPositionValue = positionValue - p + constants.NUM_POSITIONS_PER_TRACK;
@@ -111,6 +110,46 @@ const utilities = {
       });
     });
     return marbles;
+  },
+  moveMarbleForward(from, cardNumericalValue, gameBoard) {
+    let to = {
+      position: "",
+      positionValue: 0,
+      paddleBoardId: 0,
+    };
+
+    if (from.positionValue + cardNumericalValue > constants.NUM_POSITIONS_PER_TRACK) {
+      to.positionValue =
+        from.positionValue + cardNumericalValue - constants.NUM_POSITIONS_PER_TRACK;
+      to.paddleBoardId = this.getNextTrack(from.paddleBoardId, Object.keys(gameBoard).length);
+    } else {
+      to.positionValue = from.positionValue + cardNumericalValue;
+      to.paddleBoardId = from.paddleBoardId;
+    }
+
+    to.position = `track-${to.positionValue}`;
+
+    return to;
+  },
+  moveMarbleBackward(from, cardNumericalValue, gameBoard) {
+    let to = {
+      position: "",
+      positionValue: 0,
+      paddleBoardId: 0,
+    };
+
+    if (from.positionValue - cardNumericalValue <= 0) {
+      to.positionValue =
+        from.positionValue - cardNumericalValue + constants.NUM_POSITIONS_PER_TRACK;
+      to.paddleBoardId = this.getNextTrack(from.paddleBoardId, Object.keys(gameBoard).length);
+    } else {
+      to.positionValue = from.positionValue - cardNumericalValue;
+      to.paddleBoardId = from.paddleBoardId;
+    }
+
+    to.position = `track-${to.positionValue}`;
+
+    return to;
   },
 };
 

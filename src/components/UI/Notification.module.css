@@ -1,0 +1,41 @@
+.notification {
+  width: 100%;
+  height: 3rem;
+  text-align: center;
+  display: grid;
+  align-items: center;
+  font-size: 1rem;
+}
+
+.primary {
+  background-color: var(--notification-primary-bg-color);
+  color: var(--notification-primary-color);
+}
+.secondary {
+  background-color: var(--notification-secondary-bg-color);
+  color: var(--notification-secondary-color);
+}
+.success {
+  background-color: var(--notification-success-bg-color);
+  color: var(--notification-success-color);
+}
+.warning {
+  background-color: var(--notification-warning-bg-color);
+  color: var(--notification-warning-color);
+}
+.danger {
+  background-color: var(--notification-danger-bg-color);
+  color: var(--notification-danger-color);
+}
+.info {
+  background-color: var(--notification-info-bg-color);
+  color: var(--notification-info-color);
+}
+.light {
+  background-color: var(--notification-light-bg-color);
+  color: var(--notification-light-color);
+}
+.dark {
+  background-color: var(--notification-dark-bg-color);
+  color: var(--notification-dark-color);
+}

@@ -21,8 +21,12 @@ const constants = {
     },
     SPLIT_MOVE: ["7", "9"],
   },
+  TRACK: {
+    EXIT: "track-9",
+    DOOR: "track-4",
+  },
   MARBLES: {
-    START_POSITIONS: ["start-1", "start-2", "start-3", "start-4", "start-5"],
+    START_POSITIONS: ["start-1", "start-2", "start-3", "start-4", "track-1"],
     COLORS: ["yellow", "green", "black", "white", "lightblue", "orange", "red", "blue"],
   },
   PADDLE_ITEMS: [
@@ -177,7 +181,16 @@ const constants = {
       label: 1,
     },
   ],
-  MESSAGE_TYPES: ["primary", "secondary", "success", "warning", "danger", "info", "light", "dark"],
+  NOTIFICATION_TYPES: [
+    "primary",
+    "secondary",
+    "success",
+    "warning",
+    "danger",
+    "info",
+    "light",
+    "dark",
+  ],
 };
 
 export default constants;

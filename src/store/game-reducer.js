@@ -22,7 +22,7 @@ const gameSlice = createSlice({
     setDiscardedCard(state, action) {
       state.discardedCard = action.payload;
     },
-    findNextPlayer(state, action) {
+    setNextPlayerTurn(state, action) {
       state.currentPlayerId = action.payload;
     },
     updateGameBoard(state, action) {

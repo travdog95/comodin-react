@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const uiInitialState = {
-  showModal: null, //{title: "Fancy Title", message: "Fancy message!"}
+  modal: null, //{title: "Fancy Title", message: "Fancy message!"}
   auditEvents: [],
-  sendMessage: null, //{ type: "Error", className: "error", message: ""}
+  notification: null, //{ type: constants.NOTIFICATION_TYPES, message: ""}
 };
 
 const uiSlice = createSlice({
@@ -11,7 +11,7 @@ const uiSlice = createSlice({
   initialState: uiInitialState,
   reducers: {
     showModal(state, action) {
-      state.showModal = action.payload;
+      state.modal = action.payload;
     },
     auditEvents(state, action) {
       state.auditEvents = action.payload;
@@ -19,8 +19,8 @@ const uiSlice = createSlice({
     addAuditEvent(state, action) {
       state.auditEvents.push(action.payload);
     },
-    sendMessage(state, action) {
-      state.sendMessage = action.payload;
+    showNotification(state, action) {
+      state.notification = action.payload;
     },
   },
 });

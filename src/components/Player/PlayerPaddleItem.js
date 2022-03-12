@@ -53,26 +53,23 @@ function PlayerPaddleItem(props) {
   }
 
   const marbleClickHandler = (e) => {
-    console.log("marble clicked");
-    const fromPosition = item.position;
-    const fromPositionValue = tko.getMarblePositionValue(fromPosition);
-    const fromPaddleBoardId = paddleBoard.id;
+    const from = {
+      position: item.position,
+      positionValue: tko.getMarblePositionValue(item.position),
+      paddleBoardId: paddleBoard.id,
+    };
+    let to = {};
     const cardValue = discardedCard.value;
-    let toPosition = "";
-    let toPositionValue = 0;
-    let toPaddleBoardId = 0;
     let newGameBoard = { ...gameBoard };
 
     //Move marble from start
-    if (fromPosition.indexOf("start") >= 0) {
+    if (from.position.indexOf("start") >= 0) {
       if (constants.CARDS.EXIT_START.includes(cardValue)) {
-        toPosition = "track-9";
-
         //Update to and from positions
-        newGameBoard[fromPaddleBoardId] = {
-          ...newGameBoard[fromPaddleBoardId],
-          [toPosition]: marble,
-          [fromPosition]: {},
+        newGameBoard[from.paddleBoardId] = {
+          ...newGameBoard[from.paddleBoardId],
+          [constants.TRACK.EXIT]: marble,
+          [from.position]: {},
         };
 
         //Update board and UI
@@ -88,42 +85,27 @@ function PlayerPaddleItem(props) {
       }
     }
 
-    if (fromPosition.indexOf("track") !== -1) {
+    if (from.position.indexOf("track") !== -1) {
       //Determine direction
       const direction = constants.CARDS.MOVE_BACKWARD.includes(cardValue) ? -1 : 1;
       const cardNumericalValue = constants.CARDS.VALUES[cardValue];
 
       if (direction === 1) {
-        if (fromPositionValue + cardNumericalValue > constants.NUM_POSITIONS_PER_TRACK) {
-          toPositionValue =
-            fromPositionValue + cardNumericalValue - constants.NUM_POSITIONS_PER_TRACK;
-          toPaddleBoardId = tko.getNextTrack(fromPaddleBoardId, game.players.length);
-        } else {
-          toPositionValue = fromPositionValue + cardNumericalValue;
-          toPaddleBoardId = fromPaddleBoardId;
-        }
+        to = tko.moveMarbleForward(from, cardNumericalValue, gameBoard);
       } else {
-        if (fromPositionValue - cardNumericalValue <= 0) {
-          toPositionValue =
-            fromPositionValue - cardNumericalValue + constants.NUM_POSITIONS_PER_TRACK;
-          toPaddleBoardId = tko.getNextTrack(fromPaddleBoardId, Object.keys(gameBoard).length);
-        } else {
-          toPositionValue = fromPositionValue - cardNumericalValue;
-          toPaddleBoardId = fromPaddleBoardId;
-        }
+        to = tko.moveMarbleBackward(from, cardNumericalValue, gameBoard);
       }
-      toPosition = `track-${toPositionValue}`;
 
       //Update from position
-      newGameBoard[fromPaddleBoardId] = {
-        ...newGameBoard[fromPaddleBoardId],
-        [fromPosition]: {},
+      newGameBoard[from.paddleBoardId] = {
+        ...newGameBoard[from.paddleBoardId],
+        [from.position]: {},
       };
 
       //Update to position
-      newGameBoard[toPaddleBoardId] = {
-        ...newGameBoard[toPaddleBoardId],
-        [toPosition]: marble,
+      newGameBoard[to.paddleBoardId] = {
+        ...newGameBoard[to.paddleBoardId],
+        [to.position]: marble,
       };
 
       //Update board and UI
