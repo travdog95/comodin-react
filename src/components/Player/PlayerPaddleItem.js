@@ -1,39 +1,41 @@
 import { useSelector, useDispatch } from "react-redux";
 
 import { gameActions } from "../../store/game-reducer";
+import { uiActions } from "../../store/ui-reducer";
+import { drawCards } from "../../store/game-actions";
+
 import constants from "../../helpers/constants";
 import tko from "../../helpers/utilities";
 
-function PlayerPaddleItem(props) {
+const PlayerPaddleItem = (props) => {
   const dispatch = useDispatch();
+
+  const { item, paddleBoardId } = props;
 
   const moveableMarbles = useSelector((state) => state.game.moveableMarbles);
   const clickableMarbles = useSelector((state) => state.game.clickableMarbles);
   const gameBoard = useSelector((state) => state.game.gameBoard);
-  const discardedCard = useSelector((state) => state.game.discardedCard);
-  const game = props.game;
+  const players = useSelector((state) => state.game.players);
 
   let clickable = false;
-
-  const item = props.item;
-  const paddleBoard = props.paddleBoard;
   let className = `paddle-item ${item.class}`;
   const label = item.label ? item.label : "";
   let marble = {};
+  let marblePlayer = {};
 
   // If position on board
   if (item.position) {
     //If position has a marble
-    if (Object.keys(gameBoard[paddleBoard.id][item.position]).length > 0) {
-      marble = gameBoard[paddleBoard.id][item.position];
-      const marblePlayer = tko.getPlayerById(game.players, marble.playerId);
+    if (Object.keys(gameBoard[paddleBoardId][item.position]).length > 0) {
+      marble = gameBoard[paddleBoardId][item.position];
+      marblePlayer = tko.getPlayerById(players, marble.playerId);
       className += ` ${marblePlayer.color}`;
 
       //Highlight moveable marble
       moveableMarbles.forEach((moveableMarble) => {
         if (
           moveableMarble.position === item.position &&
-          moveableMarble.paddleBoardId === paddleBoard.id
+          moveableMarble.paddleBoardId === paddleBoardId
         ) {
           className += " moveable";
         }
@@ -43,7 +45,7 @@ function PlayerPaddleItem(props) {
       clickableMarbles.forEach((clickableMarble) => {
         if (
           clickableMarble.position === item.position &&
-          clickableMarble.paddleBoardId === paddleBoard.id
+          clickableMarble.paddleBoardId === paddleBoardId
         ) {
           className += " clickable";
           clickable = true;
@@ -52,42 +54,33 @@ function PlayerPaddleItem(props) {
     }
   }
 
-  const marbleClickHandler = (e) => {
+  const marbleClickHandler = () => {
     const from = {
       position: item.position,
       positionValue: tko.getMarblePositionValue(item.position),
-      paddleBoardId: paddleBoard.id,
+      paddleBoardId: paddleBoardId,
     };
     let to = {};
-    const cardValue = discardedCard.value;
+    const cardValue = marblePlayer.discardedCard.value;
     let newGameBoard = { ...gameBoard };
+    let eventText = "";
 
     //Move marble from start
-    if (from.position.indexOf("start") >= 0) {
-      if (constants.CARDS.EXIT_START.includes(cardValue)) {
-        //Update to and from positions
-        newGameBoard[from.paddleBoardId] = {
-          ...newGameBoard[from.paddleBoardId],
-          [constants.TRACK.EXIT]: marble,
-          [from.position]: {},
-        };
+    if (from.position.indexOf("start") >= 0 && constants.CARDS.EXIT_START.includes(cardValue)) {
+      //Update to and from positions
+      newGameBoard[from.paddleBoardId] = {
+        ...newGameBoard[from.paddleBoardId],
+        [constants.TRACK.EXIT]: marble,
+        [from.position]: {},
+      };
 
-        //Update board and UI
-        dispatch(gameActions.updateGameBoard(newGameBoard));
-
-        //Remove marble clickability
-        dispatch(gameActions.setClickableMarbles([]));
-
-        //Draw card
-
-        //End turn
-        return;
-      }
+      eventText = "out of start";
     }
 
     if (from.position.indexOf("track") !== -1) {
       //Determine direction
       const direction = constants.CARDS.MOVE_BACKWARD.includes(cardValue) ? -1 : 1;
+      const directionText = direction === 1 ? "forwards" : "backwards";
       const cardNumericalValue = constants.CARDS.VALUES[cardValue];
 
       if (direction === 1) {
@@ -108,12 +101,23 @@ function PlayerPaddleItem(props) {
         [to.position]: marble,
       };
 
-      //Update board and UI
-      dispatch(gameActions.updateGameBoard(newGameBoard));
-
-      //Remove marble clickability
-      dispatch(gameActions.setClickableMarbles([]));
+      eventText = `${directionText} ${cardNumericalValue} spaces`;
     }
+
+    //Update board and UI
+    dispatch(gameActions.updateGameBoard(newGameBoard));
+
+    //Remove marble clickability
+    dispatch(gameActions.setClickableMarbles([]));
+
+    //Draw card
+    dispatch(drawCards(1, marblePlayer, players));
+
+    //Add event
+    dispatch(uiActions.addAuditEvent(`${marblePlayer.screenName} moved marble ${eventText}.`));
+
+    //Set next player's turn
+    dispatch(gameActions.setNextPlayerId(tko.getNextPlayerId(marblePlayer.id, players)));
   };
 
   return (
@@ -121,6 +125,6 @@ function PlayerPaddleItem(props) {
       {label}
     </div>
   );
-}
+};
 
 export default PlayerPaddleItem;

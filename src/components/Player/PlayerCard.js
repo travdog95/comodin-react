@@ -1,13 +1,12 @@
 const PlayerCard = (props) => {
-  const card = props.card;
-  const suit = card.suit;
+  const { card, suit, isActivePlayer, onClickCard, onMouseEnterCard, onMouseLeaveCard } = props;
   const alt = `${card.value} of ${suit}`;
 
   return (
     <div
-      onClick={props.onClickCard}
-      onMouseEnter={props.onMouseEnterCard}
-      onMouseLeave={props.onMouseLeaveCard}
+      onClick={isActivePlayer ? onClickCard : undefined}
+      onMouseEnter={isActivePlayer ? onMouseEnterCard : undefined}
+      onMouseLeave={isActivePlayer ? onMouseLeaveCard : undefined}
     >
       <img
         src={card.image}

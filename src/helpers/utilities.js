@@ -151,6 +151,30 @@ const utilities = {
 
     return to;
   },
+  async newDeck(numberOfDecks) {
+    const response = await fetch(
+      `${constants.DECK_OF_CARDS_API}new/shuffle/?deck_count=${numberOfDecks}&jokers_enabled=true`
+    );
+
+    if (response.status >= 200 && response.status <= 299) {
+      const data = await response.json();
+      return data.deck_id;
+    }
+  },
+  async drawCards(deck_id, numCards) {
+    const response = await fetch(
+      `${constants.DECK_OF_CARDS_API}${deck_id}/draw/?count=${numCards}`
+    );
+
+    if (response.status >= 200 && response.status <= 299) {
+      const data = await response.json();
+      const cards = data.cards;
+
+      return cards;
+    } else {
+      return null;
+    }
+  },
 };
 
 export default utilities;

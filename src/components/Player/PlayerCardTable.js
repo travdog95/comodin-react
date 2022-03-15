@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { gameActions } from "../../store/game-reducer";
 import { uiActions } from "../../store/ui-reducer";
+import { updatePlayer } from "../../store/game-actions";
+
 import PlayerCard from "./PlayerCard";
 import PlayerDiscardPile from "./PlayerDiscardPile";
 import constants from "../../helpers/constants";
@@ -10,14 +12,14 @@ import tko from "../../helpers/utilities";
 
 const PlayerCardTable = (props) => {
   const dispatch = useDispatch();
-  const game = props.game;
-  const player = props.player;
+  const { player, players } = props;
   const playerIconClasses = `player-icon ${player.color}`;
-  const discardedCard = useSelector((state) => state.game.discardedCard);
   const gameBoard = useSelector((state) => state.game.gameBoard);
+  const settings = useSelector((state) => state.game.settings);
   const playerMarbles = tko.getPlayerMarbles(gameBoard, player);
-
-  const [hand, setHand] = useState(player.hand);
+  const currentPlayerId = useSelector((state) => state.game.currentPlayerId);
+  const isActivePlayer = parseInt(currentPlayerId) === parseInt(player.id) ? true : false;
+  const cardTableClasses = isActivePlayer ? "player-card-table active-player" : "player-card-table";
 
   const isMarblePlayable = (marble, card) => {
     // Marbles in start
@@ -59,7 +61,7 @@ const PlayerCardTable = (props) => {
   };
 
   const cardClickHandler = (e) => {
-    if (hand.length === game.settings.maxCardsInHand) {
+    if (player.hand.length === settings.maxCardsInHand) {
       const cardElement = e.target;
       const card = {
         src: cardElement.src,
@@ -68,12 +70,15 @@ const PlayerCardTable = (props) => {
         suit: cardElement.dataset.suit,
         playerId: player.id,
       };
-      dispatch(gameActions.setDiscardedCard(card));
 
-      setHand((prevHand) => {
-        return [...prevHand.filter((cardInHand) => cardInHand.code !== card.code)];
-      });
+      //Update players discardCard and hand
+      const newHand = player.hand.filter((cardInHand) => cardInHand.code !== card.code);
 
+      const playerData = { ...player, discardedCard: card, hand: newHand };
+
+      dispatch(updatePlayer(playerData, players));
+
+      //Find clickable marbles
       let clickableMarbles = [];
       playerMarbles.forEach((marble) => {
         if (isMarblePlayable(marble, card)) clickableMarbles.push(marble);
@@ -82,7 +87,7 @@ const PlayerCardTable = (props) => {
       dispatch(gameActions.setMoveableMarbles([]));
       dispatch(gameActions.setClickableMarbles(clickableMarbles));
       dispatch(
-        uiActions.addAuditEvent(`${player.screenName} discarded ${card.value} of ${card.suit}`)
+        uiActions.addAuditEvent(`${player.screenName} discarded the ${card.value} of ${card.suit}.`)
       );
     } else {
       dispatch(
@@ -91,52 +96,21 @@ const PlayerCardTable = (props) => {
     }
   };
 
-  const drawPileClickHandler = async (e) => {
-    if (hand.length === game.settings.maxCardsInHand) {
-      dispatch(
-        uiActions.showNotification({ type: "primary", message: "Your hand is already full!" })
-      );
-    } else {
-      const drawnCards = await drawCards(1);
-      setHand((prevHand) => {
-        return [...prevHand, drawnCards[0]];
-      });
-      dispatch(uiActions.addAuditEvent(`${player.screenName} drew a card.`));
-      //Advance to the next player's turn
-      const nextPlayerId = tko.getNextPlayerId(player.id, game.players);
-    }
-  };
-
-  const drawCards = async (numCards) => {
-    const response = await fetch(
-      `${constants.DECK_OF_CARDS_API}${player.deck.id}/draw/?count=${numCards}`
-    );
-
-    if (response.status >= 200 && response.status <= 299) {
-      const data = await response.json();
-      const cards = data.cards;
-
-      return cards;
-    } else {
-      return null;
-    }
-  };
-
   return (
-    <div className="player-card-table">
+    <div className={cardTableClasses}>
       <div className="player-info">
         <div className="player-name">{player.screenName}</div>
         <div className={playerIconClasses}></div>
       </div>
       <div className="deck">
-        <div className="draw-pile" onClick={drawPileClickHandler}>
+        <div className="draw-pile">
           <img src={require("../../img/back.png")} alt="Draw Pile" />
         </div>
         <div className="discard-pile">
-          <PlayerDiscardPile card={discardedCard} player={player} />
+          <PlayerDiscardPile card={player.discardedCard} />
         </div>
         <div className="hand">
-          {hand.map((card, index) => {
+          {player.hand.map((card, index) => {
             return (
               <PlayerCard
                 key={index}
@@ -144,6 +118,7 @@ const PlayerCardTable = (props) => {
                 onClickCard={cardClickHandler}
                 onMouseEnterCard={cardMouseEnterHandler}
                 onMouseLeaveCard={cardMouseLeaveHandler}
+                isActivePlayer={isActivePlayer}
               />
             );
           })}

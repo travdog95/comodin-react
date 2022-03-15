@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { gameActions } from "./store/game-reducer";
 import { uiActions } from "./store/ui-reducer";
+// import { createGame } from "./store/game-actions";
 
 import "./css/main.css";
 import "./css/_variables.css";
@@ -15,12 +16,10 @@ import ChatContainer from "./components/ChatContainer";
 import Footer from "./components/Footer";
 import Notification from "./components/UI/Notification";
 
-import Game from "./models/game";
-import Player from "./models/player";
-import Deck from "./models/deck";
 import constants from "./helpers/constants";
+import tko from "./helpers/utilities";
 
-function App() {
+const App = () => {
   const dispatch = useDispatch();
   const modal = useSelector((state) => state.ui.modal);
   const notification = useSelector((state) => state.ui.notification);
@@ -31,7 +30,6 @@ function App() {
   };
 
   const [isLoading, setIsLoading] = useState(true);
-  const [game, setGame] = useState({});
 
   const createGame = async () => {
     let gameBoard = {};
@@ -39,12 +37,11 @@ function App() {
       const playerId = index + 1;
       gameBoard[playerId] = {};
       //Get new deck from card API
-      const deck_id = await newDeck(1);
+      const deck_id = await tko.newDeck(1);
+      const deck = { id: deck_id, numDecks: 1 };
 
-      //Create new deck instance
-      const deck = new Deck(1, deck_id);
-
-      const hand = await deck.drawCards(settings.maxCardsInHand);
+      //Build player hand
+      const hand = await tko.drawCards(deck_id, settings.maxCardsInHand);
 
       //Build gameBoard
       constants.PADDLE_ITEMS.forEach((item) => {
@@ -53,6 +50,7 @@ function App() {
         }
       });
 
+      //Default marble positions
       const marbles = constants.MARBLES.START_POSITIONS.map((marblePosition, index) => {
         gameBoard[playerId][marblePosition] = { playerId, id: index + 1 };
         return {
@@ -61,33 +59,29 @@ function App() {
         };
       });
 
-      return new Player(
-        playerId,
-        playerName,
+      return {
+        id: playerId,
+        screenName: playerName,
         settings,
-        constants.MARBLES.COLORS[index],
+        color: constants.MARBLES.COLORS[index],
         deck,
         hand,
-        marbles
-      );
+        marbles,
+        discardedCard: {},
+      };
     });
 
     const players = await Promise.all(promises);
 
-    const game = new Game(players, gameBoard, settings);
+    const game = {
+      id: Date.now(),
+      settings,
+      players,
+      // turnOrder: players.map((player) => player.id),
+      gameBoard,
+    };
 
     return game;
-  };
-
-  const newDeck = async (numberOfDecks) => {
-    const response = await fetch(
-      `${constants.DECK_OF_CARDS_API}new/shuffle/?deck_count=${numberOfDecks}&jokers_enabled=true`
-    );
-
-    if (response.status >= 200 && response.status <= 299) {
-      const data = await response.json();
-      return data.deck_id;
-    }
   };
 
   useEffect(() => {
@@ -96,7 +90,9 @@ function App() {
       const game = await createGame(settings);
       console.log(game);
       dispatch(gameActions.updateGameBoard(game.gameBoard));
-      setGame(game);
+      dispatch(gameActions.setPlayers(game.players));
+      dispatch(gameActions.setSettings(settings));
+
       setIsLoading(false);
     };
     fetchData();
@@ -124,15 +120,15 @@ function App() {
       <div className="app-container">
         <EventsContainer />
         <div className="game-container">
-          <GameBoard game={game} />
+          <GameBoard />
           {notification && <Notification type={notification.type} message={notification.message} />}
-          <CardTable game={game} />
+          <CardTable />
         </div>
         <ChatContainer />
       </div>
       <Footer />
     </>
   );
-}
+};
 
 export default App;
