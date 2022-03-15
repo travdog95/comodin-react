@@ -1,6 +1,5 @@
 const constants = {
   DECK_OF_CARDS_API: "https://deckofcardsapi.com/api/deck/",
-  NUM_POSITIONS_PER_TRACK: 18,
   CARDS: {
     EXIT_START: ["JACK", "QUEEN", "KING", "ACE"],
     MOVE_BACKWARD: ["8", "9", "10"],
@@ -24,6 +23,7 @@ const constants = {
   TRACK: {
     EXIT: "track-9",
     DOOR: "track-4",
+    NUM_POSITIONS: 18,
   },
   MARBLES: {
     START_POSITIONS: ["start-1", "start-2", "start-3", "start-4", "track-1"],

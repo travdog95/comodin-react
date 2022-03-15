@@ -41,7 +41,7 @@ const utilities = {
       if (marble.position.indexOf("track") !== -1) {
         for (p; p <= cardNumericalValue; p++) {
           if (positionValue - p <= 0) {
-            currentPositionValue = positionValue - p + constants.NUM_POSITIONS_PER_TRACK;
+            currentPositionValue = positionValue - p + constants.TRACK.NUM_POSITIONS;
             currentPaddleBoardId = this.getNextTrack(paddleBoardId, Object.keys(gameBoard).length);
           } else {
             currentPositionValue = positionValue - p;
@@ -65,13 +65,21 @@ const utilities = {
         return false;
       }
 
-      //If marble is on the track
-      if (marble.position.indexOf("track") !== -1) {
+      //If marble is on the track, or in home
+      if (marble.position.indexOf("start") === -1) {
+        console.log("forward", cardNumericalValue);
+        //Refactor to use player.path
         for (p; p <= cardNumericalValue; p++) {
-          if (positionValue + p > constants.NUM_POSITIONS_PER_TRACK) {
-            currentPositionValue = positionValue + p - constants.NUM_POSITIONS_PER_TRACK;
+          if (positionValue + p > constants.TRACK.NUM_POSITIONS) {
+            currentPositionValue = positionValue + p - constants.TRACK.NUM_POSITIONS;
             currentPaddleBoardId = this.getNextTrack(paddleBoardId, Object.keys(gameBoard).length);
+            console.log("next track");
+          } else if (currentPositionValue === 4 && currentPaddleBoardId === parseInt(player.id)) {
+            console.log("at the door");
+            currentPositionValue = positionValue + p;
+            currentPaddleBoardId = paddleBoardId;
           } else {
+            console.log("moving on");
             currentPositionValue = positionValue + p;
             currentPaddleBoardId = paddleBoardId;
           }
@@ -111,16 +119,17 @@ const utilities = {
     });
     return marbles;
   },
-  moveMarbleForward(from, cardNumericalValue, gameBoard) {
+  moveMarbleForward(from, cardNumericalValue, gameBoard, marble) {
     let to = {
       position: "",
       positionValue: 0,
       paddleBoardId: 0,
     };
+    const door = constants.TRACK.DOOR;
 
-    if (from.positionValue + cardNumericalValue > constants.NUM_POSITIONS_PER_TRACK) {
-      to.positionValue =
-        from.positionValue + cardNumericalValue - constants.NUM_POSITIONS_PER_TRACK;
+    //Transition marble to next
+    if (from.positionValue + cardNumericalValue > constants.TRACK.NUM_POSITIONS) {
+      to.positionValue = from.positionValue + cardNumericalValue - constants.TRACK.NUM_POSITIONS;
       to.paddleBoardId = this.getNextTrack(from.paddleBoardId, Object.keys(gameBoard).length);
     } else {
       to.positionValue = from.positionValue + cardNumericalValue;
@@ -139,8 +148,7 @@ const utilities = {
     };
 
     if (from.positionValue - cardNumericalValue <= 0) {
-      to.positionValue =
-        from.positionValue - cardNumericalValue + constants.NUM_POSITIONS_PER_TRACK;
+      to.positionValue = from.positionValue - cardNumericalValue + constants.TRACK.NUM_POSITIONS;
       to.paddleBoardId = this.getNextTrack(from.paddleBoardId, Object.keys(gameBoard).length);
     } else {
       to.positionValue = from.positionValue - cardNumericalValue;
@@ -156,24 +164,25 @@ const utilities = {
       `${constants.DECK_OF_CARDS_API}new/shuffle/?deck_count=${numberOfDecks}&jokers_enabled=true`
     );
 
-    if (response.status >= 200 && response.status <= 299) {
-      const data = await response.json();
-      return data.deck_id;
+    if (!response.ok) {
+      throw new Error("Could not fetch cards!");
     }
+    const data = await response.json();
+    return data.deck_id;
   },
   async drawCards(deck_id, numCards) {
     const response = await fetch(
       `${constants.DECK_OF_CARDS_API}${deck_id}/draw/?count=${numCards}`
     );
 
-    if (response.status >= 200 && response.status <= 299) {
-      const data = await response.json();
-      const cards = data.cards;
-
-      return cards;
-    } else {
-      return null;
+    if (!response.ok) {
+      throw new Error("Could not fetch cards!");
     }
+
+    const data = await response.json();
+    const cards = data.cards;
+
+    return cards;
   },
 };
 

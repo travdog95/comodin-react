@@ -88,7 +88,7 @@ export default class Player {
   //     toTrack = parseInt(fromTrack);
 
   //     if (toPositionValue < 1) {
-  //       toPositionValue = toPositionValue + constants.NUM_POSITIONS_PER_TRACK;
+  //       toPositionValue = toPositionValue + constants.TRACK.NUM_POSITIONS;
   //       toTrack = toTrack === 1 ? this.settings.playerNames.length : toTrack - 1;
   //     }
 
@@ -103,8 +103,8 @@ export default class Player {
   //     let toPositionValue = fromPositionValue + parseInt(constants.CARDS.VALUES[card.value]);
   //     toTrack = parseInt(fromTrack);
 
-  //     if (toPositionValue > constants.NUM_POSITIONS_PER_TRACK) {
-  //       toPositionValue = toPositionValue - constants.NUM_POSITIONS_PER_TRACK;
+  //     if (toPositionValue > constants.TRACK.NUM_POSITIONS) {
+  //       toPositionValue = toPositionValue - constants.TRACK.NUM_POSITIONS;
   //       toTrack = utils.getNextTrack(toTrack, this.settings.playerNames.length);
   //     }
 
@@ -194,8 +194,8 @@ export default class Player {
   //     return true;
   //   } else {
   //     for (p; p <= parseInt(cardValue); p++) {
-  //       if (positionValue + p > constants.NUM_POSITIONS_PER_TRACK) {
-  //         currentPosition = positionValue + p - constants.NUM_POSITIONS_PER_TRACK;
+  //       if (positionValue + p > constants.TRACK.NUM_POSITIONS) {
+  //         currentPosition = positionValue + p - constants.TRACK.NUM_POSITIONS;
   //         currentTrack = utils.getNextTrack(track);
   //       } else {
   //         currentPosition = positionValue + p;
