@@ -24,9 +24,10 @@ const constants = {
     EXIT: "track-9",
     DOOR: "track-4",
     NUM_POSITIONS: 18,
+    START_POSITIONS: ["start-1", "start-2", "start-3", "start-4", "track-1"],
+    HOME_POSITIONS: ["home-5", "home-4", "home-3", "home-2", "home-1"],
   },
   MARBLES: {
-    START_POSITIONS: ["start-1", "start-2", "start-3", "start-4", "track-1"],
     COLORS: ["yellow", "green", "black", "white", "lightblue", "orange", "red", "blue"],
   },
   PADDLE_ITEMS: [

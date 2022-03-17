@@ -68,26 +68,32 @@ const utilities = {
       //If marble is on the track, or in home
       if (marble.position.indexOf("start") === -1) {
         console.log("forward", cardNumericalValue);
-        //Refactor to use player.path
-        for (p; p <= cardNumericalValue; p++) {
-          if (positionValue + p > constants.TRACK.NUM_POSITIONS) {
-            currentPositionValue = positionValue + p - constants.TRACK.NUM_POSITIONS;
-            currentPaddleBoardId = this.getNextTrack(paddleBoardId, Object.keys(gameBoard).length);
-            console.log("next track");
-          } else if (currentPositionValue === 4 && currentPaddleBoardId === parseInt(player.id)) {
-            console.log("at the door");
-            currentPositionValue = positionValue + p;
-            currentPaddleBoardId = paddleBoardId;
-          } else {
-            console.log("moving on");
-            currentPositionValue = positionValue + p;
-            currentPaddleBoardId = paddleBoardId;
+
+        //Find position on path
+        let startPositionIndex = 0;
+        player.path.forEach((pathItem, index) => {
+          if (
+            marble.position === pathItem.position &&
+            marble.paddleBoardId === pathItem.paddleBoardId
+          ) {
+            startPositionIndex = index;
           }
+        });
 
-          currentPosition = gameBoard[currentPaddleBoardId][`track-${currentPositionValue}`];
+        //See if another marble is on path using the card played
+        let i = 1;
+        let pathItem = "";
+        for (i; i <= cardNumericalValue; i++) {
+          pathItem = player.path[i + startPositionIndex];
+          if (pathItem) {
+            currentPosition = gameBoard[pathItem.paddleBoardId][pathItem.position];
 
-          //If there is one of the player's own marble, return false;
-          if (this.doesPositionHaveOwnMarble(currentPosition, player)) return false;
+            //If there is one of the player's own marble, return false;
+            if (this.doesPositionHaveOwnMarble(currentPosition, player)) return false;
+          } else {
+            //End of the path
+            return false;
+          }
         }
       }
 
@@ -119,24 +125,37 @@ const utilities = {
     });
     return marbles;
   },
-  moveMarbleForward(from, cardNumericalValue, gameBoard, marble) {
+  moveMarbleForward(player, from, cardNumericalValue, gameBoard) {
     let to = {
       position: "",
       positionValue: 0,
       paddleBoardId: 0,
     };
-    const door = constants.TRACK.DOOR;
 
-    //Transition marble to next
-    if (from.positionValue + cardNumericalValue > constants.TRACK.NUM_POSITIONS) {
-      to.positionValue = from.positionValue + cardNumericalValue - constants.TRACK.NUM_POSITIONS;
-      to.paddleBoardId = this.getNextTrack(from.paddleBoardId, Object.keys(gameBoard).length);
+    // //Transition marble to next
+    // if (from.positionValue + cardNumericalValue > constants.TRACK.NUM_POSITIONS) {
+    //   to.positionValue = from.positionValue + cardNumericalValue - constants.TRACK.NUM_POSITIONS;
+    //   to.paddleBoardId = this.getNextTrack(from.paddleBoardId, Object.keys(gameBoard).length);
+    // } else {
+    //   to.positionValue = from.positionValue + cardNumericalValue;
+    //   to.paddleBoardId = from.paddleBoardId;
+    // }
+    //Find position on path
+    let startPositionIndex = 0;
+    player.path.forEach((pathItem, index) => {
+      if (from.position === pathItem.position && from.paddleBoardId === pathItem.paddleBoardId) {
+        startPositionIndex = index;
+      }
+    });
+
+    //See if another marble is on path using the card played
+    const pathItem = player.path[cardNumericalValue + startPositionIndex];
+    if (pathItem) {
+      to = { ...gameBoard[pathItem.paddleBoardId][pathItem.position] };
     } else {
-      to.positionValue = from.positionValue + cardNumericalValue;
-      to.paddleBoardId = from.paddleBoardId;
+      //End of the path
+      return false;
     }
-
-    to.position = `track-${to.positionValue}`;
 
     return to;
   },

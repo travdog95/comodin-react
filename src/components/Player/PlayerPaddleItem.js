@@ -85,7 +85,7 @@ const PlayerPaddleItem = (props) => {
       const cardNumericalValue = constants.CARDS.VALUES[cardValue];
 
       if (direction === 1) {
-        to = tko.moveMarbleForward(from, cardNumericalValue, gameBoard, marble);
+        to = tko.moveMarbleForward(marblePlayer, from, cardNumericalValue, gameBoard);
       } else {
         to = tko.moveMarbleBackward(from, cardNumericalValue, gameBoard);
       }

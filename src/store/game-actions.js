@@ -70,7 +70,7 @@ export const createGame = (settings) => {
       });
 
       //Default marble positions
-      const marbles = constants.MARBLES.START_POSITIONS.map((marblePosition, index) => {
+      const marbles = constants.TRACK.START_POSITIONS.map((marblePosition, index) => {
         gameBoard[playerId][marblePosition] = { playerId, id: index + 1 };
         return {
           paddleBoardId: playerId,
@@ -110,6 +110,16 @@ export const createGame = (settings) => {
         }
       });
       player.path = path;
+
+      //Add last positions up to, and including the door
+      for (let j = 1; j <= 4; j++) {
+        path.push({ paddleBoardId: tempPlayer.id, position: `track-${j}` });
+      }
+
+      //Add home positions
+      constants.TRACK.HOME_POSITIONS.forEach((homePosition) => {
+        path.push({ paddleBoardId: tempPlayer.id, position: homePosition });
+      });
 
       return player;
     });
