@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { gameActions } from "../../store/game-reducer";
 import { uiActions } from "../../store/ui-reducer";
-import { drawCards } from "../../store/game-actions";
+import { drawCards, setNextPlayerId } from "../../store/game-actions";
 
 import constants from "../../helpers/constants";
 import tko from "../../helpers/utilities";
@@ -78,9 +78,9 @@ const PlayerPaddleItem = (props) => {
     }
 
     //If marble is on track or home
-    if (from.position.indexOf("track") !== -1) {
+    if (from.position.indexOf("start") === -1) {
       //Determine direction
-      const direction = constants.CARDS.MOVE_BACKWARD.includes(cardValue) ? -1 : 1;
+      const direction = constants.CARDS.MOVE_BACKWARDS.includes(cardValue) ? -1 : 1;
       const directionText = direction === 1 ? "forwards" : "backwards";
       const cardNumericalValue = constants.CARDS.VALUES[cardValue];
 
@@ -114,14 +114,13 @@ const PlayerPaddleItem = (props) => {
     //Add event
     dispatch(uiActions.addAuditEvent(`${marblePlayer.screenName} moved marble ${eventText}.`));
 
-    const nextPlayerId = tko.getNextPlayerId(marblePlayer.id, players);
-    const nextPlayer = tko.getPlayerById(players, nextPlayerId);
+    const nextPlayer = tko.getPlayerById(players, tko.getNextPlayerId(marblePlayer.id, players));
 
     //Draw card
     dispatch(drawCards(1, marblePlayer, players, `${nextPlayer.screenName}'s turn.`));
 
     //Set next player's turn
-    dispatch(gameActions.setNextPlayerId(nextPlayerId));
+    dispatch(setNextPlayerId(marblePlayer.id, players));
   };
 
   return (

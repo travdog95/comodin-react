@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const gameInitialState = {
   moveableMarbles: [],
   clickableMarbles: [],
-  currentPlayerId: 1,
+  currentPlayerId: 0,
   gameBoard: {},
   players: [],
   settings: {},
@@ -19,9 +19,6 @@ const gameSlice = createSlice({
     setClickableMarbles(state, action) {
       state.clickableMarbles = action.payload;
     },
-    setNextPlayerTurn(state, action) {
-      state.currentPlayerId = action.payload;
-    },
     updateGameBoard(state, action) {
       state.gameBoard = action.payload;
     },
@@ -31,7 +28,7 @@ const gameSlice = createSlice({
     setSettings(state, action) {
       state.settings = action.payload;
     },
-    setNextPlayerId(state, action) {
+    setCurrentPlayerId(state, action) {
       state.currentPlayerId = action.payload;
     },
   },

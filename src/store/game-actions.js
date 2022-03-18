@@ -136,8 +136,23 @@ export const createGame = (settings) => {
     dispatch(gameActions.updateGameBoard(gameBoard));
     dispatch(gameActions.setPlayers(players));
     dispatch(gameActions.setSettings(settings));
-    dispatch(
-      uiActions.addAuditEvent(`The game has started! It is ${players[0].screenName}'s turn.`)
-    );
+
+    dispatch(uiActions.addAuditEvent(`The game has started!`));
+    dispatch(setNextPlayerId(null, players, true));
+  };
+};
+
+export const setNextPlayerId = (currentPlayerId, players, sendEvent) => {
+  return (dispatch) => {
+    const nextPlayerId =
+      currentPlayerId === null ? players[0].id : tko.getNextPlayerId(currentPlayerId, players);
+
+    dispatch(gameActions.setCurrentPlayerId(nextPlayerId));
+
+    if (sendEvent) {
+      const nextPlayer = tko.getPlayerById(players, nextPlayerId);
+
+      dispatch(uiActions.addAuditEvent(`${nextPlayer.screenName}'s turn.`));
+    }
   };
 };
