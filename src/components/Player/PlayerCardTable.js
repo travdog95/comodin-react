@@ -52,6 +52,7 @@ const PlayerCardTable = (props) => {
                 isActivePlayer={isActivePlayer}
                 player={player}
                 players={players}
+                hasPlayableCards={hasPlayableCards}
               />
             );
           })}

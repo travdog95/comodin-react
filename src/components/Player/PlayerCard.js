@@ -2,14 +2,14 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { gameActions } from "../../store/game-reducer";
 import { uiActions } from "../../store/ui-reducer";
-import { updatePlayer } from "../../store/game-actions";
+import { updatePlayer, drawCards, setNextPlayerId } from "../../store/game-actions";
 
 import tko from "../../helpers/utilities";
 
 const PlayerCard = (props) => {
   const dispatch = useDispatch();
 
-  const { card, suit, isActivePlayer, player, players } = props;
+  const { card, suit, isActivePlayer, player, players, hasPlayableCards } = props;
   const gameBoard = useSelector((state) => state.game.gameBoard);
   const settings = useSelector((state) => state.game.settings);
   const playerMarbles = tko.getPlayerMarbles(gameBoard, player);
@@ -39,14 +39,26 @@ const PlayerCard = (props) => {
 
       dispatch(updatePlayer(playerData, players));
 
-      //Find clickable marbles
-      let clickableMarbles = [];
-      playerMarbles.forEach((marble) => {
-        if (tko.isMarblePlayable(gameBoard, marble, player, card)) clickableMarbles.push(marble);
-      });
+      if (!hasPlayableCards) {
+        console.log("has no playable cards", player);
+        const nextPlayer = tko.getPlayerById(players, tko.getNextPlayerId(player.id, players));
 
-      dispatch(gameActions.setMoveableMarbles([]));
-      dispatch(gameActions.setClickableMarbles(clickableMarbles));
+        //Draw card
+        dispatch(drawCards(1, player, players, `${nextPlayer.screenName}'s turn.`));
+
+        //Set next player's turn
+        dispatch(setNextPlayerId(player.id, players));
+      } else {
+        //Find clickable marbles
+        let clickableMarbles = [];
+        playerMarbles.forEach((marble) => {
+          if (tko.isMarblePlayable(gameBoard, marble, player, card)) clickableMarbles.push(marble);
+        });
+
+        dispatch(gameActions.setMoveableMarbles([]));
+        dispatch(gameActions.setClickableMarbles(clickableMarbles));
+      }
+
       dispatch(
         uiActions.addAuditEvent(`${player.screenName} discarded the ${card.value} of ${card.suit}.`)
       );
