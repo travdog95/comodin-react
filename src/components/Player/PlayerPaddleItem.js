@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { gameActions } from "../../store/game-reducer";
 import { uiActions } from "../../store/ui-reducer";
-import { drawCards, setNextPlayerId } from "../../store/game-actions";
+import { setNextPlayerId, updatePlayer } from "../../store/game-actions";
 
 import constants from "../../helpers/constants";
 import tko from "../../helpers/utilities";
@@ -54,7 +54,7 @@ const PlayerPaddleItem = (props) => {
     }
   }
 
-  const marbleClickHandler = () => {
+  const marbleClickHandler = async () => {
     const from = {
       position: item.position,
       positionValue: tko.getMarblePositionValue(item.position),
@@ -114,13 +114,19 @@ const PlayerPaddleItem = (props) => {
     //Add event
     dispatch(uiActions.addAuditEvent(`${marblePlayer.screenName} moved marble ${eventText}.`));
 
-    const nextPlayer = tko.getPlayerById(players, tko.getNextPlayerId(marblePlayer.id, players));
-
     //Draw card
-    dispatch(drawCards(1, marblePlayer, players, `${nextPlayer.screenName}'s turn.`));
+    const cards = await tko.drawCards(marblePlayer.deck.id, 1);
+
+    //Add card to player's hand
+    const newHand = [...marblePlayer.hand, cards[0]];
+    const playerData = { ...marblePlayer, hand: newHand };
+
+    //Update player data
+    dispatch(updatePlayer(playerData, players));
 
     //Set next player's turn
-    dispatch(setNextPlayerId(marblePlayer.id, players));
+    const auditEvents = [`${marblePlayer.screenName} drew a card.`];
+    dispatch(setNextPlayerId(marblePlayer.id, players, auditEvents));
   };
 
   return (

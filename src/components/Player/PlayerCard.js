@@ -2,18 +2,18 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { gameActions } from "../../store/game-reducer";
 import { uiActions } from "../../store/ui-reducer";
-import { updatePlayer, drawCards, setNextPlayerId } from "../../store/game-actions";
+import { updatePlayer, setNextPlayerId } from "../../store/game-actions";
 
 import tko from "../../helpers/utilities";
 
 const PlayerCard = (props) => {
   const dispatch = useDispatch();
 
-  const { card, suit, isActivePlayer, player, players, hasPlayableCards } = props;
+  const { card, isActivePlayer, player, players, hasPlayableCards } = props;
   const gameBoard = useSelector((state) => state.game.gameBoard);
   const settings = useSelector((state) => state.game.settings);
   const playerMarbles = tko.getPlayerMarbles(gameBoard, player);
-  const alt = `${card.value} of ${suit}`;
+  const alt = `${card.value} of ${card.suit}`;
 
   const cardMouseEnterHandler = () => {
     let playableMarbles = [];
@@ -27,7 +27,8 @@ const PlayerCard = (props) => {
     dispatch(gameActions.setMoveableMarbles([]));
   };
 
-  const cardClickHandler = () => {
+  const cardClickHandler = async () => {
+    let auditEvents = [];
     if (player.hand.length === settings.maxCardsInHand) {
       //Add playerId to clickedCard
       const clickedCard = { ...card, playerId: player.id };
@@ -37,18 +38,23 @@ const PlayerCard = (props) => {
 
       const playerData = { ...player, discardedCard: clickedCard, hand: newHand };
 
-      dispatch(updatePlayer(playerData, players));
+      auditEvents.push(`${player.screenName} discarded the ${card.value} of ${card.suit}.`);
 
       if (!hasPlayableCards) {
-        console.log("has no playable cards", player);
-        const nextPlayer = tko.getPlayerById(players, tko.getNextPlayerId(player.id, players));
-
         //Draw card
-        dispatch(drawCards(1, player, players, `${nextPlayer.screenName}'s turn.`));
+        const cards = await tko.drawCards(player.deck.id, 1);
+
+        //Add card to hand
+        playerData.hand.push(cards[0]);
+
+        //Update player data
+        dispatch(updatePlayer(playerData, players));
 
         //Set next player's turn
-        dispatch(setNextPlayerId(player.id, players));
+        dispatch(setNextPlayerId(player.id, players, auditEvents));
       } else {
+        dispatch(updatePlayer(playerData, players, auditEvents));
+
         //Find clickable marbles
         let clickableMarbles = [];
         playerMarbles.forEach((marble) => {
@@ -58,10 +64,6 @@ const PlayerCard = (props) => {
         dispatch(gameActions.setMoveableMarbles([]));
         dispatch(gameActions.setClickableMarbles(clickableMarbles));
       }
-
-      dispatch(
-        uiActions.addAuditEvent(`${player.screenName} discarded the ${card.value} of ${card.suit}.`)
-      );
     } else {
       dispatch(
         uiActions.showNotification({ type: "primary", message: "You need to move a marble!" })

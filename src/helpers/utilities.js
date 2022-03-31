@@ -191,7 +191,7 @@ const utilities = {
     );
 
     if (!response.ok) {
-      throw new Error("Could not fetch cards!");
+      throw new Error("Could not draw cards!");
     }
 
     const data = await response.json();

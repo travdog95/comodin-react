@@ -4,39 +4,7 @@ import { uiActions } from "./ui-reducer";
 import constants from "../helpers/constants";
 import tko from "../helpers/utilities";
 
-export const drawCards = (numCards, player, players, event) => {
-  return async (dispatch) => {
-    try {
-      const cards = await tko.drawCards(player.deck.id, numCards);
-
-      const newPlayersData = players.map((playerData) => {
-        let newPlayerData = playerData;
-        if (player.id === newPlayerData.id) {
-          //Add cards to hand
-          const newHand = newPlayerData.hand.concat(cards);
-          newPlayerData = { ...newPlayerData, hand: newHand };
-        }
-        return newPlayerData;
-      });
-
-      //Add card to hand
-      dispatch(gameActions.setPlayers(newPlayersData));
-
-      dispatch(uiActions.addAuditEvent(`${player.screenName} drew a card.`));
-
-      if (event) dispatch(uiActions.addAuditEvent(event));
-    } catch (error) {
-      dispatch(
-        uiActions.showNotification({
-          type: "danger",
-          message: "Failed to draw cards!",
-        })
-      );
-    }
-  };
-};
-
-export const updatePlayer = (playerData, players, event) => {
+export const updatePlayer = (playerData, players, auditEvents) => {
   return (dispatch) => {
     const newPlayersData = players.map((player) => {
       const newPlayerData = player.id === playerData.id ? playerData : player;
@@ -45,7 +13,12 @@ export const updatePlayer = (playerData, players, event) => {
 
     dispatch(gameActions.setPlayers(newPlayersData));
 
-    if (event) dispatch(uiActions.addAuditEvent(event));
+    //Dispatch audit events
+    if (auditEvents) {
+      auditEvents.forEach((event) => {
+        dispatch(uiActions.addAuditEvent(event));
+      });
+    }
   };
 };
 
@@ -138,21 +111,29 @@ export const createGame = (settings) => {
     dispatch(gameActions.setSettings(settings));
 
     dispatch(uiActions.addAuditEvent(`The game has started!`));
-    dispatch(setNextPlayerId(null, players, true));
+    dispatch(setNextPlayerId(null, players));
   };
 };
 
-export const setNextPlayerId = (currentPlayerId, players, sendEvent) => {
+export const setNextPlayerId = (currentPlayerId, players, auditEvents) => {
   return (dispatch) => {
     const nextPlayerId =
       currentPlayerId === null ? players[0].id : tko.getNextPlayerId(currentPlayerId, players);
 
     dispatch(gameActions.setCurrentPlayerId(nextPlayerId));
 
-    if (sendEvent) {
-      const nextPlayer = tko.getPlayerById(players, nextPlayerId);
+    const nextPlayer = tko.getPlayerById(players, nextPlayerId);
+    const nextPlayerAuditText = `${nextPlayer.screenName}'s turn.`;
 
-      dispatch(uiActions.addAuditEvent(`${nextPlayer.screenName}'s turn.`));
+    let events = [];
+    if (auditEvents) {
+      events = [...auditEvents, nextPlayerAuditText];
+    } else {
+      events = [nextPlayerAuditText];
     }
+    //Dispatch audit events
+    events.forEach((event) => {
+      dispatch(uiActions.addAuditEvent(event));
+    });
   };
 };
