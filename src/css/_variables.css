@@ -31,7 +31,7 @@
   --animation-duration: 200ms;
   --animation-timing-curve: ease-in-out;
   --paddle-height: 10rem;
-  --paddle-width: var(--paddle-height) * 4.5;
+  --paddle-width: calc(var(--paddle-height) * 4.5);
   --card-width: 6rem;
-  --card-height: var(--card-width) * 1.39;
+  --card-height: calc(var(--card-width) * 1.39);
 }

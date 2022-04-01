@@ -5,13 +5,15 @@ import { uiActions } from "../../store/ui-reducer";
 import PlayerCard from "./PlayerCard";
 import PlayerDiscardPile from "./PlayerDiscardPile";
 
+import classes from "./PlayerCardTable.module.css";
+
 import tko from "../../helpers/utilities";
 
 const PlayerCardTable = (props) => {
   const dispatch = useDispatch();
 
   const { player, players } = props;
-  const playerIconClasses = `player-icon ${player.color}`;
+  // const playerIconClasses = `player-icon ${player.color}`;
   const currentPlayerId = useSelector((state) => state.game.currentPlayerId);
   const gameBoard = useSelector((state) => state.game.gameBoard);
   const isActivePlayer = parseInt(currentPlayerId) === parseInt(player.id) ? true : false;
@@ -31,19 +33,21 @@ const PlayerCardTable = (props) => {
   }, [isActivePlayer, hasPlayableCards, player, dispatch]);
 
   return (
-    <div className={cardTableClasses}>
-      <div className="player-info">
-        <div className="player-name">{player.screenName}</div>
-        <div className={playerIconClasses}></div>
+    <div
+      className={`${classes["player-card-table"]} ${isActivePlayer && classes["active-player"]}`}
+    >
+      <div className={classes["player-info"]}>
+        <div className={classes["player-name"]}>{player.screenName}</div>
+        <div className={`${classes["player-icon"]} ${player.color}`}></div>
       </div>
-      <div className="deck">
-        <div className="draw-pile">
+      <div className={classes.deck}>
+        <div className={classes["draw-pile"]}>
           <img src={require("../../img/back.png")} alt="Draw Pile" />
         </div>
-        <div className="discard-pile">
+        <div className={classes["discard-pile"]}>
           <PlayerDiscardPile card={player.discardedCard} />
         </div>
-        <div className="hand">
+        <div className={classes.hand}>
           {player.hand.map((card, index) => {
             return (
               <PlayerCard

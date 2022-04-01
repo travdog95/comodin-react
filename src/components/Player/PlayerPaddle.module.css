@@ -1,0 +1,9 @@
+.paddle {
+  display: grid;
+  grid-template-columns: repeat(18, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  place-items: center;
+  background-color: var(--light-gray);
+  width: var(--paddle-width);
+  height: var(--paddle-height);
+}

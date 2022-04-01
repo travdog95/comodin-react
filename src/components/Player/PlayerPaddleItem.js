@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { gameActions } from "../../store/game-reducer";
 import { uiActions } from "../../store/ui-reducer";
 import { setNextPlayerId, updatePlayer } from "../../store/game-actions";
+import classes from "./PlayerPaddleItem.module.css";
 
 import constants from "../../helpers/constants";
 import tko from "../../helpers/utilities";
@@ -17,8 +18,9 @@ const PlayerPaddleItem = (props) => {
   const gameBoard = useSelector((state) => state.game.gameBoard);
   const players = useSelector((state) => state.game.players);
 
-  let clickable = false;
-  let className = `paddle-item ${item.class}`;
+  let marbleColorClass = "";
+  let isMoveable = false;
+  let isClickable = false;
   const label = item.label ? item.label : "";
   let marble = {};
   let marblePlayer = {};
@@ -29,7 +31,7 @@ const PlayerPaddleItem = (props) => {
     if (Object.keys(gameBoard[paddleBoardId][item.position]).length > 0) {
       marble = gameBoard[paddleBoardId][item.position];
       marblePlayer = tko.getPlayerById(players, marble.playerId);
-      className += ` ${marblePlayer.color}`;
+      marbleColorClass = `${marblePlayer.color}`;
 
       //Highlight moveable marble
       moveableMarbles.forEach((moveableMarble) => {
@@ -37,7 +39,7 @@ const PlayerPaddleItem = (props) => {
           moveableMarble.position === item.position &&
           moveableMarble.paddleBoardId === paddleBoardId
         ) {
-          className += " moveable";
+          isMoveable = true;
         }
       });
 
@@ -47,8 +49,7 @@ const PlayerPaddleItem = (props) => {
           clickableMarble.position === item.position &&
           clickableMarble.paddleBoardId === paddleBoardId
         ) {
-          className += " clickable";
-          clickable = true;
+          isClickable = true;
         }
       });
     }
@@ -130,7 +131,12 @@ const PlayerPaddleItem = (props) => {
   };
 
   return (
-    <div className={className} onClick={clickable ? marbleClickHandler : undefined}>
+    <div
+      className={`${classes["paddle-item"]} ${classes[item.class]} ${marbleColorClass} ${
+        isClickable && classes.clickable
+      } ${isMoveable && classes.moveable}`}
+      onClick={isClickable ? marbleClickHandler : undefined}
+    >
       {label}
     </div>
   );

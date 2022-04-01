@@ -1,3 +1,5 @@
+import classes from "./PlayerCard.module.css";
+
 const PlayerDiscardPile = (props) => {
   const { card } = props;
   let discardPileContent = "";
@@ -5,7 +7,7 @@ const PlayerDiscardPile = (props) => {
   if (Object.keys(card).length > 0) {
     const alt = `${card.value} of ${card.suit}`;
 
-    discardPileContent = <img src={card.image} className="card" alt={alt} />;
+    discardPileContent = <img src={card.image} className={classes.card} alt={alt} />;
   }
   return discardPileContent;
 };

@@ -1,0 +1,44 @@
+.paddle-item {
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+}
+
+.paddle-item.moveable {
+  border: 1px solid red;
+}
+
+.paddle-item.clickable {
+  border: 1px solid pink;
+  cursor: pointer;
+}
+
+.paddle-item.position {
+  border-radius: 50%;
+  background: white;
+  font-size: 1rem;
+}
+
+.spacer-1 {
+  grid-column: span 1;
+}
+.spacer-2 {
+  grid-column: span 2;
+}
+.spacer-3 {
+  grid-column: span 3;
+}
+.spacer-4 {
+  grid-column: span 4;
+}
+.spacer-5 {
+  grid-column: span 5;
+}
+.spacer-8 {
+  grid-column: span 8;
+}
+.spacer-9 {
+  grid-column: span 9;
+}
+

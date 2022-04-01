@@ -4,8 +4,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { uiActions } from "./store/ui-reducer";
 import { createGame } from "./store/game-actions";
 
-import "./css/main.css";
+import "./app.css";
 import "./css/_variables.css";
+import "./css/_utilities.css";
 
 import Modal from "./components/UI/Modal";
 import GameBoard from "./components/GameBoard";

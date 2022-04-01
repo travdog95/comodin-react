@@ -4,6 +4,7 @@ import { gameActions } from "../../store/game-reducer";
 import { uiActions } from "../../store/ui-reducer";
 import { updatePlayer, setNextPlayerId } from "../../store/game-actions";
 
+import classes from "./PlayerCard.module.css";
 import tko from "../../helpers/utilities";
 
 const PlayerCard = (props) => {
@@ -79,7 +80,7 @@ const PlayerCard = (props) => {
     >
       <img
         src={card.image}
-        className="card"
+        className={classes.card}
         alt={alt}
         data-code={card.code}
         data-value={card.value}

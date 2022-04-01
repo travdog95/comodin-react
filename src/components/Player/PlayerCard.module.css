@@ -1,0 +1,10 @@
+.card {
+  width: var(--card-width);
+  display: block;
+  transition: margin 500ms;
+}
+
+.card:hover {
+  cursor: pointer;
+  margin: -1rem 0 1rem 0;
+}
