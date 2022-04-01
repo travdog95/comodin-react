@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom";
-import Button from "./Button";
+import Button from "../Button/Button";
 import classes from "./Modal.module.css";
 
 const Backdrop = (props) => {

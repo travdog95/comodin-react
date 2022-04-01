@@ -1,7 +1,8 @@
 import { useSelector, useDispatch } from "react-redux";
 
 import { gameActions } from "../../store/game-reducer";
-import { uiActions } from "../../store/ui-reducer";
+import { toast } from "react-toastify";
+
 import { updatePlayer, setNextPlayerId } from "../../store/game-actions";
 
 import classes from "./PlayerCard.module.css";
@@ -66,9 +67,7 @@ const PlayerCard = (props) => {
         dispatch(gameActions.setClickableMarbles(clickableMarbles));
       }
     } else {
-      dispatch(
-        uiActions.showNotification({ type: "primary", message: "You need to move a marble!" })
-      );
+      toast.info("You need to move a marble!");
     }
   };
 

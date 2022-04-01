@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { ToastContainer } from "react-toastify";
 
+import "react-toastify/dist/ReactToastify.css";
 import { uiActions } from "./store/ui-reducer";
 import { createGame } from "./store/game-actions";
 
-import "./app.css";
+import "./App.css";
 import "./css/_variables.css";
 import "./css/_utilities.css";
 
-import Modal from "./components/UI/Modal";
+import Modal from "./components/UI/Modal/Modal";
 import GameBoard from "./components/GameBoard";
 import CardTable from "./components/CardTable";
 import EventsContainer from "./components/EventsContainer";
@@ -49,7 +51,7 @@ const App = () => {
   return (
     <>
       {modal && <Modal title={modal.title} message={modal.message} onConfirm={closeModalHandler} />}
-
+      <ToastContainer position="top-right" draggable={false} theme="dark" pauseOnHover={false} />
       <header className="header">
         <div className="title">Jokers & Marbles</div>
       </header>
