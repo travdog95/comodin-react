@@ -8,3 +8,17 @@
   cursor: pointer;
   margin: -1rem 0 1rem 0;
 }
+
+.card.inactive,
+.discard-card {
+  transition: none;
+}
+.card.inactive:hover {
+  cursor: not-allowed;
+  margin: 0;
+}
+
+.discard-card:hover {
+  cursor:auto;
+  margin: 0
+}

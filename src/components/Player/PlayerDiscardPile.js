@@ -7,7 +7,9 @@ const PlayerDiscardPile = (props) => {
   if (Object.keys(card).length > 0) {
     const alt = `${card.value} of ${card.suit}`;
 
-    discardPileContent = <img src={card.image} className={classes.card} alt={alt} />;
+    discardPileContent = (
+      <img src={card.image} className={`${classes.card} ${classes["discard-card"]}`} alt={alt} />
+    );
   }
   return discardPileContent;
 };

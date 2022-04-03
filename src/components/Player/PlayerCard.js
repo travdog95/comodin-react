@@ -79,7 +79,7 @@ const PlayerCard = (props) => {
     >
       <img
         src={card.image}
-        className={classes.card}
+        className={`${classes.card} ${!isActivePlayer && classes.inactive}`}
         alt={alt}
         data-code={card.code}
         data-value={card.value}

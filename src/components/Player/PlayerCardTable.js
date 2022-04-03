@@ -32,7 +32,7 @@ const PlayerCardTable = (props) => {
         <div className={`${classes["player-icon"]} ${player.color}`}></div>
       </div>
       <div className={classes.deck}>
-        <div className={classes["draw-pile"]}>
+        <div className={`${classes["draw-pile"]}  ${!isActivePlayer && classes.inactive}`}>
           <img src={require("../../img/back.png")} alt="Draw Pile" />
         </div>
         <div className={classes["discard-pile"]}>
