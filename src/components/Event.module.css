@@ -1,0 +1,12 @@
+.event {
+  font-size: .8rem;
+  margin-bottom: .3rem;
+}
+
+.even {
+  background-color: var(--light-gray);
+}
+
+.odd {
+  background-color: inherit;
+}

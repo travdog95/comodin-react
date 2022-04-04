@@ -24,8 +24,18 @@ header.header {
   min-height: 87vh;
 }
 
+.events-container, .chat-container {
+  border: 1px solid black;
+  width: 15vw;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  height: 87vh;
+  padding: .3em 0 .3em .3em
+}
+
 .game-container {
   padding: 0.5rem;
+  width: 70vw;
 }
 
 footer.footer {
