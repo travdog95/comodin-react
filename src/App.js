@@ -16,12 +16,10 @@ import CardTable from "./components/CardTable";
 import EventsContainer from "./components/EventsContainer";
 import ChatContainer from "./components/ChatContainer";
 import Footer from "./components/Footer";
-import Notification from "./components/UI/Notification";
 
 const App = () => {
   const dispatch = useDispatch();
   const modal = useSelector((state) => state.ui.modal);
-  const notification = useSelector((state) => state.ui.notification);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -59,7 +57,6 @@ const App = () => {
         <EventsContainer />
         <div className="game-container">
           <GameBoard />
-          {notification && <Notification type={notification.type} message={notification.message} />}
           <CardTable />
         </div>
         <ChatContainer />

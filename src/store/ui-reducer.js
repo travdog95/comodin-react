@@ -6,8 +6,7 @@ for (let i = 0; i < 50; i++) {
 }
 const uiInitialState = {
   modal: null, //{title: "Fancy Title", message: "Fancy message!"}
-  auditEvents: eventData,
-  notification: null, //{ type: constants.NOTIFICATION_TYPES, message: ""}
+  auditEvents: [],
 };
 
 const uiSlice = createSlice({
@@ -22,9 +21,6 @@ const uiSlice = createSlice({
     },
     addAuditEvent(state, action) {
       state.auditEvents.unshift(action.payload);
-    },
-    showNotification(state, action) {
-      state.notification = action.payload;
     },
   },
 });

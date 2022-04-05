@@ -103,29 +103,61 @@ const utilities = {
   doesPositionHaveOwnMarble(position, player) {
     return position.playerId === player.id;
   },
-  getPlayerMarbles(gameBoard, player) {
+  getMarbles(gameBoard, options) {
+    const { player, paddleBoardSection, notPlayer, teammates } = options;
     let marbles = [];
 
     //Each paddleBoard
     Object.keys(gameBoard).forEach((paddleBoardId) => {
       const paddleBoard = gameBoard[paddleBoardId];
+      let include = [];
+
       //Iterate over each position
       Object.keys(paddleBoard).forEach((position) => {
-        const marblePlayerId = paddleBoard[position].playerId;
+        include = [];
+        //Only get marbles for player
+        if (player !== undefined) {
+          if (paddleBoard[position].playerId !== player.id) {
+            include.push(false);
+          }
+        }
 
-        if (marblePlayerId === player.id) {
-          const marbleId = paddleBoard[position].id;
+        //Only include marbles for paddleBoardSection
+        if (paddleBoardSection !== undefined) {
+          if (position.indexOf(paddleBoardSection) === -1) {
+            include.push(false);
+          }
+        }
+
+        //Only include marbles of all other players
+        if (notPlayer !== undefined) {
+          if (
+            paddleBoard[position].playerId === undefined ||
+            paddleBoard[position].playerId === notPlayer.id
+          ) {
+            include.push(false);
+          }
+        }
+
+        if (teammates !== undefined) {
+          //find teammates of player
+          //Don't include marbles non-teammate marbles
+        }
+
+        if (!include.includes(false)) {
           marbles.push({
             paddleBoardId: parseInt(paddleBoardId),
-            id: parseInt(marbleId),
+            playerId: paddleBoard[position].playerId,
+            id: parseInt(paddleBoard[position].id),
             position,
           });
         }
       });
     });
+
     return marbles;
   },
-  moveMarbleForward(player, from, cardNumericalValue, gameBoard) {
+  moveMarble(player, from, direction, cardNumericalValue, gameBoard) {
     let to = {
       position: "",
       positionValue: 0,
@@ -141,36 +173,24 @@ const utilities = {
     });
 
     //See if another marble is on path using the card played
-    const pathItem = player.path[cardNumericalValue + startPositionIndex];
+    let toIndex = 0;
+
+    if (direction === 1) {
+      toIndex = cardNumericalValue + startPositionIndex;
+    } else {
+      const difference = startPositionIndex - cardNumericalValue;
+      const pathSansHome = player.path.length - constants.TRACK.HOME_POSITIONS.length;
+      toIndex = difference < 0 ? pathSansHome + difference : difference;
+    }
+
+    const pathItem = player.path[toIndex];
     if (pathItem) {
-      let displacedMarble = {};
-      if (Object.keys(gameBoard[pathItem.paddleBoardId][pathItem.position]).length !== 0) {
-        displacedMarble = gameBoard[pathItem.paddleBoardId][pathItem.position];
-      }
+      const displacedMarble = this.getDisplacedMarble(gameBoard, pathItem);
       to = { ...pathItem, displacedMarble };
     } else {
       //End of the path
       return false;
     }
-
-    return to;
-  },
-  moveMarbleBackward(from, cardNumericalValue, gameBoard) {
-    let to = {
-      position: "",
-      positionValue: 0,
-      paddleBoardId: 0,
-    };
-
-    if (from.positionValue - cardNumericalValue <= 0) {
-      to.positionValue = from.positionValue - cardNumericalValue + constants.TRACK.NUM_POSITIONS;
-      to.paddleBoardId = this.getNextTrack(from.paddleBoardId, Object.keys(gameBoard).length);
-    } else {
-      to.positionValue = from.positionValue - cardNumericalValue;
-      to.paddleBoardId = from.paddleBoardId;
-    }
-
-    to.position = `track-${to.positionValue}`;
 
     return to;
   },
@@ -200,6 +220,17 @@ const utilities = {
     return cards;
   },
   isMarblePlayable(gameBoard, marble, player, card) {
+    //Joker
+    if (card.value === "JOKER") {
+      //if there are any marbles on the track that don't belong to player
+      const marblesOnTrack = this.getMarbles(gameBoard, {
+        notPlayer: player,
+        paddleBoardSection: "track",
+      });
+
+      return marblesOnTrack.length > 0 ? true : false;
+    }
+
     // Marbles in start
     if (marble.position.indexOf("start") !== -1 && parseInt(marble.paddleBoardId) === player.id) {
       if (
@@ -221,7 +252,8 @@ const utilities = {
     return false;
   },
   hasPlayableCards(gameBoard, player) {
-    const playerMarbles = this.getPlayerMarbles(gameBoard, player);
+    const playerMarbles = this.getMarbles(gameBoard, { player });
+
     let playableMarbles = [];
 
     //Iterate over player's hand
@@ -232,6 +264,41 @@ const utilities = {
     });
 
     return playableMarbles.length === 0 ? false : true;
+  },
+  findEmptyStartPosition(playerId, gameBoard) {
+    const startPositions = ["start-1", "start-2", "start-3", "start-4", "start-5"];
+    let emptyStartPosition = "";
+    startPositions.forEach((startPosition) => {
+      //check to see if marble exists in startPosition
+      if (Object.keys(gameBoard[playerId][startPosition]).length === 0) {
+        emptyStartPosition = startPosition;
+      }
+    });
+    return emptyStartPosition;
+  },
+  getDisplacedMarble(gameBoard, paddleItem) {
+    let displacedMarble = {};
+    if (paddleItem) {
+      if (Object.keys(gameBoard[paddleItem.paddleBoardId][paddleItem.position]).length !== 0) {
+        displacedMarble = gameBoard[paddleItem.paddleBoardId][paddleItem.position];
+      }
+    }
+    return displacedMarble;
+  },
+  placeDisplacedMarble(gameBoard, displacedMarble) {
+    let newGameBoard = { ...gameBoard };
+
+    const emptyStartPosition = this.findEmptyStartPosition(displacedMarble.playerId, gameBoard);
+
+    newGameBoard[displacedMarble.playerId] = {
+      ...newGameBoard[displacedMarble.playerId],
+      [emptyStartPosition]: {
+        playerId: displacedMarble.playerId,
+        id: displacedMarble.id,
+      },
+    };
+
+    return newGameBoard;
   },
 };
 

@@ -1,7 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 
 import { gameActions } from "../../store/game-reducer";
-import { uiActions } from "../../store/ui-reducer";
 import { setNextPlayerId, updatePlayer } from "../../store/game-actions";
 import classes from "./PlayerPaddleItem.module.css";
 
@@ -64,7 +63,7 @@ const PlayerPaddleItem = (props) => {
     let to = {};
     const cardValue = marblePlayer.discardedCard.value;
     let newGameBoard = { ...gameBoard };
-    let eventText = "";
+    let auditEvents = [];
 
     //Move marble from start
     if (from.position.indexOf("start") >= 0 && constants.CARDS.EXIT_START.includes(cardValue)) {
@@ -75,7 +74,24 @@ const PlayerPaddleItem = (props) => {
         [from.position]: {},
       };
 
-      eventText = "out of start";
+      auditEvents.push(`${marblePlayer.screenName} moved marble out of start`);
+
+      //Check to see if marble is in start exit
+      const startPosition = {
+        paddleBoardId: from.paddleBoardId,
+        position: constants.TRACK.EXIT,
+      };
+      const displacedMarble = tko.getDisplacedMarble(gameBoard, startPosition);
+
+      if (Object.keys(displacedMarble).length > 0) {
+        newGameBoard = tko.placeDisplacedMarble(newGameBoard, displacedMarble);
+
+        const displacedMarblePlayer = tko.getPlayerById(players, displacedMarble.playerId);
+
+        auditEvents.push(
+          `${marblePlayer.screenName} sent ${displacedMarblePlayer.screenName}'s marble to start.`
+        );
+      }
     }
 
     //If marble is on track or home
@@ -85,11 +101,7 @@ const PlayerPaddleItem = (props) => {
       const directionText = direction === 1 ? "forwards" : "backwards";
       const cardNumericalValue = constants.CARDS.VALUES[cardValue];
 
-      if (direction === 1) {
-        to = tko.moveMarbleForward(marblePlayer, from, cardNumericalValue, gameBoard);
-      } else {
-        to = tko.moveMarbleBackward(from, cardNumericalValue, gameBoard);
-      }
+      to = tko.moveMarble(marblePlayer, from, direction, cardNumericalValue, gameBoard);
 
       //Update from position
       newGameBoard[from.paddleBoardId] = {
@@ -103,7 +115,21 @@ const PlayerPaddleItem = (props) => {
         [to.position]: marble,
       };
 
-      eventText = `${directionText} ${cardNumericalValue} spaces`;
+      //Add audit event
+      auditEvents.push(
+        `${marblePlayer.screenName} moved marble ${directionText} ${cardNumericalValue} spaces`
+      );
+
+      //Update displaced marble
+      if (Object.keys(to.displacedMarble).length > 0) {
+        newGameBoard = tko.placeDisplacedMarble(newGameBoard, to.displacedMarble);
+
+        const displacedMarblePlayer = tko.getPlayerById(players, to.displacedMarble.playerId);
+
+        auditEvents.push(
+          `${marblePlayer.screenName} sent ${displacedMarblePlayer.screenName}'s marble to start.`
+        );
+      }
     }
 
     //Update board and UI
@@ -111,9 +137,6 @@ const PlayerPaddleItem = (props) => {
 
     //Remove marble clickability
     dispatch(gameActions.setClickableMarbles([]));
-
-    //Add event
-    dispatch(uiActions.addAuditEvent(`${marblePlayer.screenName} moved marble ${eventText}.`));
 
     //Draw card
     const cards = await tko.drawCards(marblePlayer.deck.id, 1);
@@ -126,7 +149,7 @@ const PlayerPaddleItem = (props) => {
     dispatch(updatePlayer(playerData, players));
 
     //Set next player's turn
-    const auditEvents = [`${marblePlayer.screenName} drew a card.`];
+    auditEvents.push(`${marblePlayer.screenName} drew a card.`);
     dispatch(setNextPlayerId(marblePlayer.id, players, auditEvents));
   };
 

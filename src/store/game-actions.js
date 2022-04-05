@@ -43,12 +43,8 @@ export const createGame = (settings) => {
       });
 
       //Default marble positions
-      const marbles = constants.TRACK.START_POSITIONS.map((marblePosition, index) => {
+      constants.TRACK.START_POSITIONS.forEach((marblePosition, index) => {
         gameBoard[playerId][marblePosition] = { playerId, id: index + 1 };
-        return {
-          paddleBoardId: playerId,
-          position: marblePosition,
-        };
       });
 
       return {
@@ -58,7 +54,6 @@ export const createGame = (settings) => {
         color: constants.MARBLES.COLORS[index],
         deck,
         hand,
-        marbles,
         discardedCard: {},
         path: [],
       };

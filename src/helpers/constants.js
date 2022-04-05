@@ -184,16 +184,6 @@ const constants = {
       label: 1,
     },
   ],
-  NOTIFICATION_TYPES: [
-    "primary",
-    "secondary",
-    "success",
-    "warning",
-    "danger",
-    "info",
-    "light",
-    "dark",
-  ],
 };
 
 export default constants;

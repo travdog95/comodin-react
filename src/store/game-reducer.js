@@ -21,6 +21,7 @@ const gameSlice = createSlice({
     },
     updateGameBoard(state, action) {
       state.gameBoard = action.payload;
+      console.log("game board updated", state.gameBoard);
     },
     setPlayers(state, action) {
       state.players = action.payload;

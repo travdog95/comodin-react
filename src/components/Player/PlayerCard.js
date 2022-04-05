@@ -14,8 +14,15 @@ const PlayerCard = (props) => {
   const { card, isActivePlayer, player, players, hasPlayableCards } = props;
   const gameBoard = useSelector((state) => state.game.gameBoard);
   const settings = useSelector((state) => state.game.settings);
-  const playerMarbles = tko.getPlayerMarbles(gameBoard, player);
+  const playerMarbles = tko.getMarbles(gameBoard, { player });
   const alt = `${card.value} of ${card.suit}`;
+
+  const playableMarbles = playerMarbles.filter((marble) => {
+    return tko.isMarblePlayable(gameBoard, marble, player, card);
+  });
+
+  const isCardActive =
+    isActivePlayer && (playableMarbles.length > 0 || !hasPlayableCards) ? true : false;
 
   const cardMouseEnterHandler = () => {
     let playableMarbles = [];
@@ -73,13 +80,13 @@ const PlayerCard = (props) => {
 
   return (
     <div
-      onClick={isActivePlayer ? cardClickHandler : undefined}
-      onMouseEnter={isActivePlayer ? cardMouseEnterHandler : undefined}
-      onMouseLeave={isActivePlayer ? cardMouseLeaveHandler : undefined}
+      onClick={isCardActive ? cardClickHandler : undefined}
+      onMouseEnter={isCardActive ? cardMouseEnterHandler : undefined}
+      onMouseLeave={isCardActive ? cardMouseLeaveHandler : undefined}
     >
       <img
         src={card.image}
-        className={`${classes.card} ${!isActivePlayer && classes.inactive}`}
+        className={`${classes.card} ${!isCardActive && classes.inactive}`}
         alt={alt}
         data-code={card.code}
         data-value={card.value}
