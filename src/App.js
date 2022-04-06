@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { uiActions } from "./store/ui-reducer";
 import { createGame } from "./store/game-actions";
 
-import "./App.css";
+import "./Apps.css";
 import "./css/_variables.css";
 import "./css/_utilities.css";
 

@@ -2,8 +2,6 @@ const constants = {
   DECK_OF_CARDS_API: "https://deckofcardsapi.com/api/deck/",
   CARDS: {
     EXIT_START: ["JACK", "QUEEN", "KING", "ACE"],
-    // EXIT_START: ["JACK"],
-
     MOVE_BACKWARDS: ["8"],
     VALUES: {
       ACE: 1,
