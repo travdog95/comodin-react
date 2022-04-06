@@ -8,6 +8,7 @@ import PlayerDiscardPile from "./PlayerDiscardPile";
 import classes from "./PlayerCardTable.module.css";
 
 import tko from "../../helpers/utilities";
+import constants from "../../helpers/constants";
 
 const PlayerCardTable = (props) => {
   const { player, players } = props;
@@ -15,13 +16,27 @@ const PlayerCardTable = (props) => {
   const gameBoard = useSelector((state) => state.game.gameBoard);
   const isActivePlayer = parseInt(currentPlayerId) === parseInt(player.id) ? true : false;
 
+  //Check to see if user has playable cards
   const hasPlayableCards = tko.hasPlayableCards(gameBoard, player);
 
+  //only playable card is a joker
+  //This is wrong
+  let onlyPlayableCardIsJoker = false;
+  if (hasPlayableCards) {
+    const jokers = player.hand.filter((card) => card.value === "JOKER");
+    onlyPlayableCardIsJoker = jokers.length === 0 ? false : true;
+  }
+
   useEffect(() => {
-    if (isActivePlayer && !hasPlayableCards && player.hand.length === 5) {
+    if (
+      isActivePlayer &&
+      !hasPlayableCards &&
+      player.hand.length === constants.HAND.NUM_CARDS &&
+      !onlyPlayableCardIsJoker
+    ) {
       toast.warning("You do not have any playable cards! Please discard.");
     }
-  }, [isActivePlayer, hasPlayableCards, player.hand.length]);
+  }, [isActivePlayer, hasPlayableCards, player.hand.length, onlyPlayableCardIsJoker]);
 
   return (
     <div
@@ -48,6 +63,7 @@ const PlayerCardTable = (props) => {
                 player={player}
                 players={players}
                 hasPlayableCards={hasPlayableCards}
+                onlyPlayableCardIsJoker={onlyPlayableCardIsJoker}
               />
             );
           })}

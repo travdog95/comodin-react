@@ -11,7 +11,8 @@ import tko from "../../helpers/utilities";
 const PlayerCard = (props) => {
   const dispatch = useDispatch();
 
-  const { card, isActivePlayer, player, players, hasPlayableCards } = props;
+  const { card, isActivePlayer, player, players, hasPlayableCards, onlyPlayableCardIsJoker } =
+    props;
   const gameBoard = useSelector((state) => state.game.gameBoard);
   const settings = useSelector((state) => state.game.settings);
   const playerMarbles = tko.getMarbles(gameBoard, { player });
@@ -21,8 +22,17 @@ const PlayerCard = (props) => {
     return tko.isMarblePlayable(gameBoard, marble, player, card);
   });
 
-  const isCardActive =
-    isActivePlayer && (playableMarbles.length > 0 || !hasPlayableCards) ? true : false;
+  if (onlyPlayableCardIsJoker) console.log("card", card.code, onlyPlayableCardIsJoker);
+  //Determine if card is active
+  let isCardActive;
+  if (
+    isActivePlayer &&
+    (playableMarbles.length > 0 || !hasPlayableCards || onlyPlayableCardIsJoker)
+  ) {
+    isCardActive = true;
+  } else {
+    isCardActive = false;
+  }
 
   const cardMouseEnterHandler = () => {
     let playableMarbles = [];
@@ -49,7 +59,18 @@ const PlayerCard = (props) => {
 
       auditEvents.push(`${player.screenName} discarded the ${card.value} of ${card.suit}.`);
 
-      if (!hasPlayableCards) {
+      if (hasPlayableCards) {
+        dispatch(updatePlayer(playerData, players, auditEvents));
+
+        //Find clickable marbles
+        let clickableMarbles = [];
+        playerMarbles.forEach((marble) => {
+          if (tko.isMarblePlayable(gameBoard, marble, player, card)) clickableMarbles.push(marble);
+        });
+
+        dispatch(gameActions.setMoveableMarbles([]));
+        dispatch(gameActions.setClickableMarbles(clickableMarbles));
+      } else {
         //Draw card
         const cards = await tko.drawCards(player.deck.id, 1);
 
@@ -61,17 +82,6 @@ const PlayerCard = (props) => {
 
         //Set next player's turn
         dispatch(setNextPlayerId(player.id, players, auditEvents));
-      } else {
-        dispatch(updatePlayer(playerData, players, auditEvents));
-
-        //Find clickable marbles
-        let clickableMarbles = [];
-        playerMarbles.forEach((marble) => {
-          if (tko.isMarblePlayable(gameBoard, marble, player, card)) clickableMarbles.push(marble);
-        });
-
-        dispatch(gameActions.setMoveableMarbles([]));
-        dispatch(gameActions.setClickableMarbles(clickableMarbles));
       }
     } else {
       toast.info("You need to move a marble!");
