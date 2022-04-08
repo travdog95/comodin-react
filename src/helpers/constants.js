@@ -4,8 +4,8 @@ const constants = {
     NUM_CARDS: 5,
   },
   CARDS: {
-    EXIT_START: ["ACE"],
-    // EXIT_START: ["JACK", "QUEEN", "KING", "ACE"],
+    // EXIT_START: ["ACE"],
+    EXIT_START: ["JACK", "QUEEN", "KING", "ACE"],
     MOVE_BACKWARDS: ["8"],
     VALUES: {
       ACE: 1,
